@@ -1,0 +1,21 @@
+{
+    "devDependencies": {
+        "babel-core": "new_C_^6.25.0",
+        "babel-loader": "new_C_^7.1.1",
+        "babel-plugin-transform-runtime": "new_C_^6.23.0",
+        "babel-preset-env": "new_C_^1.6.0",
+        "babel-preset-stage-0": "new_C_^6.24.1",
+        "babel-register": "new_C_^6.24.1",
+		"new" :{
+			 "url-loader": "new_C_^0.6.2",
+       		 "vue-html-loader": "new_C_^1.2.4",
+       		 "vue-loader": "new_C_^14.1.1",
+			"newnew":{
+				 "url-loader": "new_C_^0.6.2",
+       			 "vue-html-loader": "new_C_^1.2.4",
+       			 "vue-loader": "new_C_^14.1.1",
+      		 	 "vue-style-loader": "new_C_^3.0.1"
+			}
+		}
+    }
+}

@@ -1,0 +1,25 @@
+syntax = "proto2";
+
+package protobuf;
+
+message request{ 
+	required bytes	type = 1; // type of request
+	required bytes  norf = 2; // nonce or fileid
+	optional bytes  snon = 3; // signature of nonce
+	optional bytes  enpk = 4; // public key for encryption
+	repeated bytes  list = 5; // whitelist
+    required bytes  smsg = 6; // signature of above message
+} 
+
+message response{  
+    required bytes  type = 1; // type of response
+	required bytes  cora = 2; // cipher or answer or the clear format of fileid
+	
+	message allkeys{
+		required bytes pub = 1;
+		required bytes enk = 2;
+	}
+	
+	repeated allkeys keys = 3; // keys of all the maintainers
+    required bytes   smsg = 4; // signature of above message
+} 

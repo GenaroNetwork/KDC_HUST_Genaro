@@ -1,0 +1,15 @@
+{
+    "scripts": {
+        "build": "new_B_node .electron-vue/build.js",
+        "build:darwin": "new_B_cross-env BUILD_TARGET=darwin node .electron-vue/build.js",
+        "build:linux": "new_B_cross-env BUILD_TARGET=linux node .electron-vue/build.js",
+        "build:mas": "new_B_cross-env BUILD_TARGET=mas node .electron-vue/build.js"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome": "new_B_^1.1.2",
+        "@fortawesome/fontawesome-free-brands": "new_B_^5.0.4",
+        "@fortawesome/fontawesome-free-solid": "new_B_^5.0.4",
+        "@fortawesome/vue-fontawesome": "new_B_0.0.22",
+        "axios": "new_B_^0.17.1"
+    }
+}
