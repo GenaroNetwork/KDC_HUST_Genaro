@@ -149,7 +149,7 @@ func ReturnAllKeys(msd *mgo.Database, sud *mgo.Database,
 
 	err = sac.Find(bson.M{}).All(&salts)
 	if err != nil {
-		return nil, errors.New("something wrong with salts search")
+		return nil, errors.New("ReturnAllKeys: something wrong with salts search")
 	}
 
 	for _, salt := range salts {
@@ -261,15 +261,15 @@ func GenSubKey(d *mgo.Database, msk, fileid, pub []byte) (subk *SubKey, err erro
 	// generate salts
 	salt0, err := crypto.GetSalt()
 	if err != nil {
-		return nil, errors.New("failed to get salt0")
+		return nil, errors.New("GenSubKey: failed to get salt0")
 	}
 	salt1, err := crypto.GetSalt()
 	if err != nil {
-		return nil, errors.New("failed to get salt1")
+		return nil, errors.New("GenSubKey: failed to get salt1")
 	}
 	salt2, err := crypto.GetSalt()
 	if err != nil {
-		return nil, errors.New("failed to get salt2")
+		return nil, errors.New("GenSubKey: failed to get salt2")
 	}
 
 	nsa := new(Salt)

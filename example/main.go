@@ -7,20 +7,20 @@ import (
 
 var
 (
-	ACreat = "C:/Users/shareong/Desktop/Coding/GoProject/src/genaro-crypto/example/json/initial.json"
+	ACreat = "../json/initial.json"
 
 	// This id is just used in TestCoreFunctions
 	fileid = "5bf98c8eede891f1ab36a40e745f37c803ec69bc"
 
-	AChange = "C:/Users/shareong/Desktop/Coding/GoProject/src/genaro-crypto/example/json/modifiedbyA.json"
+	AChange = "../json/modifiedbyA.json"
 
-	BChange = "C:/Users/shareong/Desktop/Coding/GoProject/src/genaro-crypto/example/json/modifiedbyB.json"
+	BChange = "../json/modifiedbyB.json"
 
-	CChange = "C:/Users/shareong/Desktop/Coding/GoProject/src/genaro-crypto/example/json/modifiedbyC.json"
+	CChange = "../json/modifiedbyC.json"
 
-	AChangeA = "C:/Users/shareong/Desktop/Coding/GoProject/src/genaro-crypto/example/json/modifiedbyAagain.json"
+	AChangeA = "../json/modifiedbyAagain.json"
 
-	keypairspath = "C:/Users/shareong/Desktop/Coding/GoProject/src/genaro-crypto/example/keypairs"
+	keypairspath = "../keypairs"
 
 	EkvDB = "EnKeyValues"
 )

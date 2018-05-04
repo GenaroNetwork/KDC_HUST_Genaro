@@ -224,7 +224,7 @@ func (kp *KeyPairs) EcdsaKeyToBytes(pri *ecdsa.PrivateKey, curve elliptic.Curve)
 	kp.Pk = EcdsaPubToBytes(&pri.PublicKey, curve)
 	kp.Sk = ecdsaPriToBytes(pri)
 	if kp.Pk == nil || kp.Sk == nil {
-		return errors.New("failed to transform ecdsa key to bytes")
+		return errors.New("EcdsaKeyToBytes: failed to transform ecdsa key to bytes")
 	}
 	return nil
 }
@@ -244,7 +244,7 @@ func BytesToEcdsaKey(pk, sk []byte, curve elliptic.Curve) (pri *ecdsa.PrivateKey
 	pub := BytesToEcdsaPub(pk, curve)
 	pri, err = bytesToEcdsaPri(sk, curve)
 	if err != nil || !cmpPublic(pub, &pri.PublicKey) {
-		return nil, errors.New("wrong key paris")
+		return nil, errors.New("BytesToEcdsaKey: wrong key paris")
 	}
 	return
 }
@@ -320,7 +320,7 @@ func LoadEcdsaKeyFromFile(path string) (pri *ecdsa.PrivateKey, err error) {
 func LoadEciesKeyFromFile(path string) (pri *ecies.PrivateKey, err error) {
 	spri, err := LoadEcdsaKeyFromFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load key with error: %s", err.Error())
+		return nil, fmt.Errorf("LoadEciesKeyFromFile: failed to load key with error: %s", err.Error())
 	}
 	return ecies.ImportECDSA(spri), nil
 }
@@ -334,12 +334,12 @@ func UpdateEciesKey(path string, rand io.Reader, curve elliptic.Curve) error {
 	kp := new(KeyPairs)
 	err = kp.EciesKeyToBytes(pri, curve)
 	if err != nil {
-		return errors.New("failed to transform ecies key to bytes")
+		return errors.New("UpdateEciesKey: failed to transform ecies key to bytes")
 	}
 
 	err = kp.SaveKeyToFile(path)
 	if err != nil {
-		return errors.New("failed to save key to file")
+		return errors.New("UpdateEciesKey: failed to save key to file")
 	}
 	return nil
 }

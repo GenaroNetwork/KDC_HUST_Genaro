@@ -97,7 +97,7 @@ func HandleRequestA(msg []byte,
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("failed to connect with local host")
+		return nil, errors.New("HandleRequestA: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -113,7 +113,7 @@ func HandleRequestA(msg []byte,
 		// generate sub keys
 		subk, err := GenSubKey(sdb, msk, fileid[:], pub1)
 		if err != nil {
-			return nil, errors.New("something wrong with sub keys generation")
+			return nil, errors.New("HandleRequestA: something wrong with sub keys generation")
 		}
 
 		// return an expected response
@@ -123,20 +123,20 @@ func HandleRequestA(msg []byte,
 	// It is a new request
 	msk, err = GenMasterKey(mdb, fileid[:], pub1)
 	if err != nil {
-		return nil, errors.New("something wrong with master key generation")
+		return nil, errors.New("HandleRequestA: something wrong with master key generation")
 	}
 
 	//generate sub keys
 	subk, err := GenSubKey(sdb, msk, fileid[:], pub1)
 	if err != nil {
-		return nil, errors.New("something wrong with sub keys generation")
+		return nil, errors.New("HandleRequestA: something wrong with sub keys generation")
 	}
 
 	// save whitelist
 	wdb := session.DB(WilDB)
 	err = SaveWhitelist(wdb, fileid[:], pub1, req.List)
 	if err != nil {
-		return nil, errors.New("something wrong with whitelist saving")
+		return nil, errors.New("HandleRequestA: something wrong with whitelist saving")
 	}
 
 	// return an expected response
@@ -150,7 +150,7 @@ func HandleRequestB(fileid, spub []byte,
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("failed to connect with local host")
+		return nil, errors.New("HandleRequestB: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -172,7 +172,7 @@ func HandleRequestB(fileid, spub []byte,
 	sdb := session.DB(SaltDB)
 	subk, err := GenSubKey(sdb, msk, fileid[:], spub)
 	if err != nil {
-		return nil, errors.New("something wrong with sub keys generation")
+		return nil, errors.New("HandleRequestB: something wrong with sub keys generation")
 	}
 
 	// return an expected response
@@ -186,7 +186,7 @@ func HandleRequestC(fileid, pub []byte,
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("failed to connect with local host")
+		return nil, errors.New("HandleRequestC: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -227,7 +227,7 @@ func HandleRequestD(fileid, pub []byte) (error) {
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return errors.New("failed to connect with local host")
+		return errors.New("HandleRequestD: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -255,7 +255,7 @@ func HandleRequestE(fileid, spub []byte,
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("failed to connect with local host")
+		return nil, errors.New("HandleRequestE: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -295,7 +295,7 @@ func ExpectedResponse(fileid []byte,
 	// encrypt keys and fileid by client's ecies public key
 	c, err := crypto.EciesEncrypt(rand.Reader, pub, m)
 	if err != nil {
-		return nil, errors.New("failed to encrypt keys and fileid")
+		return nil, errors.New("ExpectedResponse: failed to encrypt keys and fileid")
 	}
 
 	// assemble message
@@ -306,7 +306,7 @@ func ExpectedResponse(fileid []byte,
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("ExpectedResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
@@ -330,7 +330,7 @@ func PositiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("PositiveResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
@@ -354,7 +354,7 @@ func NegativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("NegativeResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
@@ -385,7 +385,7 @@ func AllKeysResponse(fileid []byte,
 		// encrypt key by ecies pub
 		ek, err := crypto.EciesEncrypt(rand.Reader, pub, k)
 		if err != nil {
-			return nil, errors.New("failed to encrypt keys")
+			return nil, errors.New("AllKeysResponse: failed to encrypt keys")
 		}
 
 		ele := &protobuf.ResponseAllkeys{
@@ -405,7 +405,7 @@ func AllKeysResponse(fileid []byte,
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("AllKeysResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
