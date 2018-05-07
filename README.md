@@ -13,7 +13,6 @@ golang.org/x/crypto              branch master  branch master  4ec37c6   4ec37c6
 gopkg.in/mgo.v2                  branch v2      branch v2      3f83fa5   3f83fa5  5
 ```
 
-
 ## Run example code
 
 A running MongoDB is required to run example. The following command shoud be run inside your [GOPATH](https://github.com/golang/go/wiki/GOPATH)
@@ -24,6 +23,11 @@ cd genaro-crypto
 go build -o ./example/bin/example ./example
 cd example/bin/
 ./example
+```
+run test
+```
+cd genaro-crypto/client
+go test -v
 ```
 
 ## Recommended develop environment
