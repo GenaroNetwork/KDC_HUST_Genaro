@@ -9,6 +9,7 @@ import (
 	"genaro-crypto/crypto"
 	"genaro-crypto/kdc"
 	"genaro-crypto/protobuf"
+
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"github.com/golang/protobuf/proto"
 )
@@ -33,11 +34,11 @@ type EnKeyValue struct {
 func (user *GenaroUser) LoadAsyKey(ecdsapath, eciespath string) (err error) {
 	user.Spri, err = crypto.LoadEcdsaKeyFromFile(ecdsapath)
 	if err != nil {
-		return errors.New("LoadAsyKey: failed to load ecdsa key")
+		return err
 	}
 	user.Epri, err = crypto.LoadEciesKeyFromFile(eciespath)
 	if err != nil {
-		return errors.New("LoadAsyKey: failed to load ecies key")
+		return err
 	}
 	return nil
 }
