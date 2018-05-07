@@ -1,21 +1,21 @@
 package client
 
 import (
-	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"bytes"
 	"crypto/ecdsa"
-	"genaro-crypto/crypto"
-	"genaro-crypto/kdc"
+	"crypto/rand"
 	"errors"
 	"fmt"
-	"bytes"
+	"genaro-crypto/crypto"
+	"genaro-crypto/kdc"
 	"genaro-crypto/protobuf"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"github.com/golang/protobuf/proto"
-	"crypto/rand"
 )
 
-type GenaroUser struct{
-	Epri    *ecies.PrivateKey
-	Spri    *ecdsa.PrivateKey
+type GenaroUser struct {
+	Epri *ecies.PrivateKey
+	Spri *ecdsa.PrivateKey
 }
 
 type KeyValue struct {
@@ -24,9 +24,9 @@ type KeyValue struct {
 
 // The ciphertext form of key-value pair
 type EnKeyValue struct {
-	SSEKey  []byte   // searchable ciphertext of key
-	EKey    []byte   // ciphertext of key
-	EValue  []byte   // ciphertext of value
+	SSEKey []byte // searchable ciphertext of key
+	EKey   []byte // ciphertext of key
+	EValue []byte // ciphertext of value
 }
 
 // LoadAsyKey initializes user by loading two keys from local file
@@ -62,7 +62,7 @@ func EncryptKeyValue(keys *kdc.SubKey, kv *KeyValue) (ekv *EnKeyValue, err error
 	ekv = &EnKeyValue{
 		SSEKey: ssekey,
 		EKey:   ekey,
-		EValue:  evalue,
+		EValue: evalue,
 	}
 	return
 }
@@ -81,23 +81,22 @@ func DecryptKeyValue(keys *kdc.SubKey, ekv *EnKeyValue) (kv *KeyValue, err error
 
 	kv = &KeyValue{
 		Key:   key,
-		Value:  value,
+		Value: value,
 	}
 	return
 }
 
-
 // GetResponseA handles the response of Request A
 func (user *GenaroUser) GetResponseA(rep []byte, path string,
-	                                 pub *ecdsa.PublicKey,
-	                                 ) (ans, fileid []byte, keys *kdc.SubKey, err error) {
+	pub *ecdsa.PublicKey,
+) (ans, fileid []byte, keys *kdc.SubKey, err error) {
 	rp := &protobuf.Response{}
 	err = proto.Unmarshal(rep, rp)
 	if err != nil {
 		return nil, nil, nil, errors.New("GetResponseA: failed to unmarshal response-buffer")
 	}
 
-	msg := make([]byte, 1 + len(rp.Cora))
+	msg := make([]byte, 1+len(rp.Cora))
 	copy(msg, rp.Type)
 	copy(msg[1:], rp.Cora)
 
@@ -127,31 +126,31 @@ func (user *GenaroUser) GetResponseA(rep []byte, path string,
 		return nil, nil, nil, fmt.Errorf("GetResponseA: failed to load nonce with error: %s", err.Error())
 	}
 
-	fileid = make([]byte, len(m[crypto.SubkLen * 3:]))
-	copy(fileid, m[crypto.SubkLen * 3:])
+	fileid = make([]byte, len(m[crypto.SubkLen*3:]))
+	copy(fileid, m[crypto.SubkLen*3:])
 	loadid := crypto.SHA1(sn)
 	if !bytes.Equal(fileid, loadid[:]) {
 		return nil, nil, nil, errors.New("GetResponseA: not wanted fileid")
 	}
 
 	keys = &kdc.SubKey{
-		Subk0:	m[:crypto.SubkLen],
-		Subk1:	m[crypto.SubkLen : crypto.SubkLen * 2],
-		Subk2:	m[crypto.SubkLen * 2 : crypto.SubkLen * 3],
+		Subk0: m[:crypto.SubkLen],
+		Subk1: m[crypto.SubkLen : crypto.SubkLen*2],
+		Subk2: m[crypto.SubkLen*2 : crypto.SubkLen*3],
 	}
 	return
 }
 
 // GetResponseB dandles the response of Request B
 func (user *GenaroUser) GetResponseB(rep, fileid []byte, pub *ecdsa.PublicKey,
-                                     ) (ans[]byte, keys *kdc.SubKey, err error) {
+) (ans []byte, keys *kdc.SubKey, err error) {
 	rp := &protobuf.Response{}
 	err = proto.Unmarshal(rep, rp)
 	if err != nil {
 		return nil, nil, errors.New("GetResponseB: failed to unmarshal response-buffer")
 	}
 
-	msg := make([]byte, 1 + len(rp.Cora))
+	msg := make([]byte, 1+len(rp.Cora))
 	copy(msg, rp.Type)
 	copy(msg[1:], rp.Cora)
 
@@ -175,29 +174,29 @@ func (user *GenaroUser) GetResponseB(rep, fileid []byte, pub *ecdsa.PublicKey,
 		return nil, nil, errors.New("GetResponseB: something wrong with decryption")
 	}
 
-	fid := make([]byte, len(m[crypto.SubkLen * 3:]))
-	copy(fid, m[crypto.SubkLen * 3:])
+	fid := make([]byte, len(m[crypto.SubkLen*3:]))
+	copy(fid, m[crypto.SubkLen*3:])
 	if !bytes.Equal(fileid, fid) {
 		return nil, nil, errors.New("GetResponseB: not wanted fileid")
 	}
 
 	keys = &kdc.SubKey{
-		Subk0:	m[:crypto.SubkLen],
-		Subk1:	m[crypto.SubkLen : crypto.SubkLen * 2],
-		Subk2:	m[crypto.SubkLen * 2 : crypto.SubkLen * 3],
+		Subk0: m[:crypto.SubkLen],
+		Subk1: m[crypto.SubkLen : crypto.SubkLen*2],
+		Subk2: m[crypto.SubkLen*2 : crypto.SubkLen*3],
 	}
 	return
 }
 
 //  GetResponseC handles the response of Request C
-func (user *GenaroUser) GetResponseC(rep []byte, pub *ecdsa.PublicKey) (ans[]byte, state bool, err error) {
+func (user *GenaroUser) GetResponseC(rep []byte, pub *ecdsa.PublicKey) (ans []byte, state bool, err error) {
 	rp := &protobuf.Response{}
 	err = proto.Unmarshal(rep, rp)
 	if err != nil {
 		return nil, false, errors.New("GetResponseC: failed to unmarshal response-buffer")
 	}
 
-	msg := make([]byte, 1 + len(rp.Cora))
+	msg := make([]byte, 1+len(rp.Cora))
 	copy(msg, rp.Type)
 	copy(msg[1:], rp.Cora)
 
@@ -222,7 +221,7 @@ func (user *GenaroUser) GetResponseC(rep []byte, pub *ecdsa.PublicKey) (ans[]byt
 // Currently, there is no need for KDC to reply to Request D
 // GetResponseE dandles the response of Request E
 func (user *GenaroUser) GetResponseE(rep, fileid []byte, pub *ecdsa.PublicKey,
-                                      ) (ans[]byte, keys []*kdc.KeyOwner, err error) {
+) (ans []byte, keys []*kdc.KeyOwner, err error) {
 	rp := &protobuf.Response{}
 	err = proto.Unmarshal(rep, rp)
 	if err != nil {
@@ -231,10 +230,10 @@ func (user *GenaroUser) GetResponseE(rep, fileid []byte, pub *ecdsa.PublicKey,
 
 	eks := kdc.EkeysToBytes(rp.Keys)
 
-	msg := make([]byte, 1 + len(rp.Cora) + len(eks))
+	msg := make([]byte, 1+len(rp.Cora)+len(eks))
 	copy(msg, rp.Type)
 	copy(msg[1:], rp.Cora)
-	copy(msg[1 + len(rp.Cora):], eks)
+	copy(msg[1+len(rp.Cora):], eks)
 
 	// Verify Signature
 	if !crypto.VerifySignature(msg, rp.Smsg, pub) {
@@ -257,14 +256,14 @@ func (user *GenaroUser) GetResponseE(rep, fileid []byte, pub *ecdsa.PublicKey,
 	for _, ko := range rp.Keys {
 		m, err := crypto.EciesDecrypt(rand.Reader, ko.Enk, user.Epri)
 		if err != nil {
-			return nil,nil, errors.New("GetResponseC: something wrong with decryption")
+			return nil, nil, errors.New("GetResponseC: something wrong with decryption")
 		}
 		ele := &kdc.KeyOwner{
 			Pub: ko.Pub,
 			SubKey: kdc.SubKey{
-				Subk0:	m[:crypto.SubkLen],
-				Subk1:	m[crypto.SubkLen : crypto.SubkLen * 2],
-				Subk2:	m[crypto.SubkLen * 2:],
+				Subk0: m[:crypto.SubkLen],
+				Subk1: m[crypto.SubkLen : crypto.SubkLen*2],
+				Subk2: m[crypto.SubkLen*2:],
 			},
 		}
 		keys = append(keys, ele)

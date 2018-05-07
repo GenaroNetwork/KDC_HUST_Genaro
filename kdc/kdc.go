@@ -11,37 +11,35 @@
 package kdc
 
 import (
-	"gopkg.in/mgo.v2"
 	"encoding/hex"
-	"gopkg.in/mgo.v2/bson"
 	"errors"
-	"genaro-crypto/crypto"
 	"fmt"
+	"genaro-crypto/crypto"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
-var
-(
+var (
 	// MskDB stores the master key of each contract file
-	MskDB  = "MasterKeyDB"
+	MskDB = "MasterKeyDB"
 
 	// SaltDB stores the salts of each public key to generate sub keys
 	// Each collection in SaltDB is named by fileid
 	SaltDB = "SaltDB"
 
 	// WilDB stores whitelist
-	WilDB  = "WhitelistDB"
+	WilDB = "WhitelistDB"
 
 	// SupDB stores superuser list
-	SupDB  = "SuperuserDB"
+	SupDB = "SuperuserDB"
 
 	// OldDB stores the outdated contract list in which the contract is completed
 	// At some point, KDC will migrate expired data to genaro storage network
 	// according to the fileid list in OldDB
-	OldDB  = "OutdatedDB"
+	OldDB = "OutdatedDB"
 )
 
-var
-(
+var (
 	// Collection in each DB
 	MskCol = "masterKey"
 	WilCol = "whitelist"
@@ -49,8 +47,7 @@ var
 	OldCol = "outdatedlist"
 )
 
-var
-(
+var (
 	ErrPubExist = fmt.Errorf("the added pub has existed in whitelist")
 	ErrNoAccess = fmt.Errorf("permission denied")
 	ErrNoFileid = fmt.Errorf("no such fileid in kdc")
@@ -65,7 +62,7 @@ type Msk struct {
 }
 
 type Salt struct {
-	Pub   string
+	Pub                 string
 	Salt0, Salt1, Salt2 string
 }
 
@@ -120,7 +117,7 @@ func CheckSuperuser(d *mgo.Database, user []byte) bool {
 
 // ReturnAllKeys returns all the sub keys of the fileid for contract owner and superuser
 func ReturnAllKeys(msd *mgo.Database, sud *mgo.Database,
-					sad *mgo.Database, fileid, pub []byte ) (ko []*KeyOwner, err error) {
+	sad *mgo.Database, fileid, pub []byte) (ko []*KeyOwner, err error) {
 	file := hex.EncodeToString(fileid)
 	owner := hex.EncodeToString(pub)
 
@@ -320,7 +317,7 @@ func CheckWhitelist(d *mgo.Database, fileid, pub []byte) bool {
 	// return whitelist collection
 	c := d.C(WilCol)
 	err := c.Find(bson.M{"$or": []bson.M{{"file": file, "list": sn},
-			{"file": file,"owner": sn}}}).One(&result)
+		{"file": file, "owner": sn}}}).One(&result)
 	if err == nil {
 		return true // no err means the pub is found
 	}

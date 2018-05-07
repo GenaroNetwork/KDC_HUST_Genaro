@@ -1,23 +1,22 @@
 package kdc
 
 import (
-	"testing"
-	"gopkg.in/mgo.v2"
 	"encoding/hex"
 	"fmt"
+	"gopkg.in/mgo.v2"
+	"testing"
 )
 
-var
-(
+var (
 	testid = "5bf98c8eede891f1ab36a40e745f37c803ec69bc"
 
 	owner = "041bcf290fa63d7279bddb8733f4684099bb21a33af2b34234c00bf249799aebcee0a195a509379f4815d6c5e3277ab73e6987c93fb22aca808b1f70d55ed4db5c"
 
-	superlist = []string {"04c89dd3fe9094ca293caf78c63297267e0e2f7e9e0d8723b6b098aa393d9c9a52df68a96b51b3a6db5cb6011e59bf38b7a4b385a247ed0a6bb09a92ba54115b9f",
-	                      "04be81d40309281c1932c0e25932f12edd66296c4d68ec759a41b599064808c980cd9c036a20a7658d376d489201d1821f24e156e358cb379f14b19a36e94086d0",
+	superlist = []string{"04c89dd3fe9094ca293caf78c63297267e0e2f7e9e0d8723b6b098aa393d9c9a52df68a96b51b3a6db5cb6011e59bf38b7a4b385a247ed0a6bb09a92ba54115b9f",
+		"04be81d40309281c1932c0e25932f12edd66296c4d68ec759a41b599064808c980cd9c036a20a7658d376d489201d1821f24e156e358cb379f14b19a36e94086d0",
 	}
 
-	whitelist = []string {
+	whitelist = []string{
 		"04ab6d46ddeaf7e4e94adf8538c2a70644270314b11cec4d694961dea6c73d3495fce7d02b7bf4157e9a3724c8dffbd04e5d47ccac5cdc4607a9b866af2aae90e1",
 		"042cc6ca86c207d0113e49914430f8e16da5bb633afdd312f064471db1874269071df02cd7f0d819b66aeb02b1fe1b54ffc9417f98e384213ca84ad34363aae889",
 		"0492ac50c4903599f1b03b11cf987032180ec8a190f7d7f53c0047aa63208d1b812bda9bb46a810ad90ba8c6a3df215dcbb369eefa07e86205eed35557edc2ab7a",
@@ -107,7 +106,6 @@ func TestCheckWhitelist(t *testing.T) {
 	fmt.Println(CheckWhitelist(db, id, test2))
 	fmt.Println(CheckWhitelist(db, id, test3))
 
-
 	c := db.C(WilCol)
 	test4, _ := hex.DecodeString("047c1b0673ce332d61b97348d01c4d333f137db491aba4970f84e37acca8ae77ad179425557dfe9c5e75d852de851addedaede994201f8c1ad66ee93e87ae82ed3")
 
@@ -156,7 +154,7 @@ func TestKeyGenAndReturn(t *testing.T) {
 	pub1, _ := hex.DecodeString(whitelist[0])
 	pub2, _ := hex.DecodeString(whitelist[1])
 
-    subk1, err := GenSubKey(db, msk, id, pub1)
+	subk1, err := GenSubKey(db, msk, id, pub1)
 	if err != nil {
 		panic(err)
 	}

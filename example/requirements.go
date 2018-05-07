@@ -1,20 +1,20 @@
 package main
 
 import (
-	"errors"
-	"genaro-crypto/client"
-	"genaro-crypto/kdc"
-	"genaro-crypto/crypto"
-	"gopkg.in/mgo.v2"
-	"encoding/hex"
-	"gopkg.in/mgo.v2/bson"
 	"bytes"
+	"encoding/hex"
+	"errors"
 	"fmt"
+	"genaro-crypto/client"
+	"genaro-crypto/crypto"
+	"genaro-crypto/kdc"
+
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
-
 // encrypt contract data formed as key-values
-func EncContract(fileid []byte, keys KeyWithPub, kvs map[string] string) (num int, err error) {
+func EncContract(fileid []byte, keys KeyWithPub, kvs map[string]string) (num int, err error) {
 	num = 0
 
 	// connect database host
@@ -51,7 +51,7 @@ func EncContract(fileid []byte, keys KeyWithPub, kvs map[string] string) (num in
 		ek := hex.EncodeToString(ekv.EKey)
 		ev := hex.EncodeToString(ekv.EValue)
 
-		err = ec.Insert(&EkeyValue{keys.Pub, ssek, ek, ev })
+		err = ec.Insert(&EkeyValue{keys.Pub, ssek, ek, ev})
 		if err != nil {
 			return num, err
 		}
@@ -62,12 +62,12 @@ func EncContract(fileid []byte, keys KeyWithPub, kvs map[string] string) (num in
 }
 
 // decrypt all encrypted key-values
-func DecWithPrint(fileid []byte, keys []KeyWithPub ) (num int, err error) {
+func DecWithPrint(fileid []byte, keys []KeyWithPub) (num int, err error) {
 	num = 0
 
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return num,  errors.New("failed to connect with local host")
+		return num, errors.New("failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -79,7 +79,7 @@ func DecWithPrint(fileid []byte, keys []KeyWithPub ) (num int, err error) {
 
 		err = ec.Find(bson.M{"pub": key.Pub}).All(&ekvs)
 		if err != nil {
-			return num,  errors.New("something wrong with ekvs search")
+			return num, errors.New("something wrong with ekvs search")
 		}
 
 		for _, ele := range ekvs {
@@ -128,7 +128,7 @@ func Search(tokens []Token, fileid []byte) (evs []EValues, num int, err error) {
 
 		err = ec.Find(bson.M{"pub": pub}).All(&ekvs)
 		if err != nil {
-			return nil, num,  errors.New("something wrong with ekvs search")
+			return nil, num, errors.New("something wrong with ekvs search")
 		}
 
 		var temp [][]byte

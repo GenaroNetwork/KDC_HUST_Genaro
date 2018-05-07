@@ -10,11 +10,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/hex"
-	"genaro-crypto/crypto"
 	"fmt"
 	"genaro-crypto/client"
-	"bytes"
+	"genaro-crypto/crypto"
 	"genaro-crypto/kdc"
 )
 
@@ -46,7 +46,7 @@ func TestEncrypt() {
 	}
 	fmt.Printf("%d key-values have been parsed\n", num)
 
-	num , err = EncContract(id, testkeys[0], kvs)
+	num, err = EncContract(id, testkeys[0], kvs)
 	if err != nil {
 		panic(err)
 	}
@@ -130,7 +130,7 @@ func TestSearch() {
 		}
 
 		ele := Token{
-			Pub: pub,
+			Pub:   pub,
 			Token: token,
 		}
 		tokens = append(tokens, ele)
@@ -158,10 +158,10 @@ func TestSearch() {
 }
 
 func TestUploadContract() {
-	ecdsapath  := keypairspath + "/ecdsaA"
-	eciespath  := keypairspath + "/eciesA"
+	ecdsapath := keypairspath + "/ecdsaA"
+	eciespath := keypairspath + "/eciesA"
 	kecdsapath := keypairspath + "/ecdsakdc"
-	noncepath  := keypairspath + "/nonce"
+	noncepath := keypairspath + "/nonce"
 
 	// init genaro user
 	user := new(client.GenaroUser)
@@ -208,12 +208,12 @@ func TestUploadContract() {
 	key0 := hex.EncodeToString(keys.Subk0)
 	key1 := hex.EncodeToString(keys.Subk1)
 	key2 := hex.EncodeToString(keys.Subk2)
-	fmt.Printf("ans:%s\nfileid:%s\nkey0:%s\nkey1:%s\nkey2:%s\n",string(ans),id,key0,key1,key2)
+	fmt.Printf("ans:%s\nfileid:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", string(ans), id, key0, key1, key2)
 
 	owner := crypto.EcdsaPubToBytes(&user.Spri.PublicKey, crypto.DefaultCurve)
 	pub := hex.EncodeToString(owner)
 	kw := KeyWithPub{
-		Pub: pub,
+		Pub:  pub,
 		Key0: key0,
 		Key1: key1,
 		Key2: key2,
@@ -227,7 +227,7 @@ func TestUploadContract() {
 	fmt.Printf("%d key-values have been parsed\n", num)
 
 	// encrypt contract
-	num , err = EncContract(fileid, kw, kvs)
+	num, err = EncContract(fileid, kw, kvs)
 	if err != nil {
 		panic(err)
 	}
@@ -246,10 +246,10 @@ func getFileid(noncepath string) ([]byte, error) {
 }
 
 func TestModifyContract() {
-	ecdsapath  := keypairspath + "/ecdsaB"
-	eciespath  := keypairspath + "/eciesB"
+	ecdsapath := keypairspath + "/ecdsaB"
+	eciespath := keypairspath + "/eciesB"
 	kecdsapath := keypairspath + "/ecdsakdc"
-	noncepath  := keypairspath + "/nonce"
+	noncepath := keypairspath + "/nonce"
 
 	// init genaro user
 	user := new(client.GenaroUser)
@@ -265,7 +265,6 @@ func TestModifyContract() {
 
 	// call for keys
 	buf, err := user.CallRequestB(fileid)
-
 
 	// load the ecdsa key of kdc
 	kpri, err := crypto.LoadEcdsaKeyFromFile(kecdsapath)
@@ -288,12 +287,12 @@ func TestModifyContract() {
 	key0 := hex.EncodeToString(keys.Subk0)
 	key1 := hex.EncodeToString(keys.Subk1)
 	key2 := hex.EncodeToString(keys.Subk2)
-	fmt.Printf("ans:%s\nkey0:%s\nkey1:%s\nkey2:%s\n",string(ans),key0,key1,key2)
+	fmt.Printf("ans:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", string(ans), key0, key1, key2)
 
 	owner := crypto.EcdsaPubToBytes(&user.Spri.PublicKey, crypto.DefaultCurve)
 	pub := hex.EncodeToString(owner)
 	kw := KeyWithPub{
-		Pub: pub,
+		Pub:  pub,
 		Key0: key0,
 		Key1: key1,
 		Key2: key2,
@@ -307,7 +306,7 @@ func TestModifyContract() {
 	fmt.Printf("%d key-values have been parsed\n", num)
 
 	// encrypt contract
-	num , err = EncContract(fileid, kw, kvs)
+	num, err = EncContract(fileid, kw, kvs)
 	if err != nil {
 		panic(err)
 	}
@@ -316,10 +315,10 @@ func TestModifyContract() {
 }
 
 func TestUpdateWhitelist() {
-	ecdsapath  := keypairspath + "/ecdsaA"
-	eciespath  := keypairspath + "/eciesA"
+	ecdsapath := keypairspath + "/ecdsaA"
+	eciespath := keypairspath + "/eciesA"
 	kecdsapath := keypairspath + "/ecdsakdc"
-	noncepath  := keypairspath + "/nonce"
+	noncepath := keypairspath + "/nonce"
 
 	// init genaro user
 	user := new(client.GenaroUser)
@@ -342,7 +341,6 @@ func TestUpdateWhitelist() {
 	// update whitelist
 	buf, err := user.CallRequestC(fileid, nlist)
 
-
 	// load the ecdsa key of kdc
 	kpri, err := crypto.LoadEcdsaKeyFromFile(kecdsapath)
 	if err != nil {
@@ -360,16 +358,15 @@ func TestUpdateWhitelist() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("ans:%s\nstatue:%t\n",ans, statue)
+	fmt.Printf("ans:%s\nstatue:%t\n", ans, statue)
 	fmt.Printf("TestUpdateWhitelist ends\n\n")
 }
 
-
 func TestDecryptContract() {
-	ecdsapath  := keypairspath + "/ecdsaA"
-	eciespath  := keypairspath + "/eciesA"
+	ecdsapath := keypairspath + "/ecdsaA"
+	eciespath := keypairspath + "/eciesA"
 	kecdsapath := keypairspath + "/ecdsakdc"
-	noncepath  := keypairspath + "/nonce"
+	noncepath := keypairspath + "/nonce"
 
 	// init genaro user
 	user := new(client.GenaroUser)
@@ -420,10 +417,10 @@ func TestDecryptContract() {
 		key0 := hex.EncodeToString(key.SubKey.Subk0)
 		key1 := hex.EncodeToString(key.SubKey.Subk1)
 		key2 := hex.EncodeToString(key.SubKey.Subk2)
-		fmt.Printf("owner:%s\nkey0:%s\nkey1:%s\nkey2:%s\n",pub,key0,key1,key2)
+		fmt.Printf("owner:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", pub, key0, key1, key2)
 
 		kw := KeyWithPub{
-			Pub: pub,
+			Pub:  pub,
 			Key0: key0,
 			Key1: key1,
 			Key2: key2,
@@ -442,10 +439,10 @@ func TestDecryptContract() {
 }
 
 func TestSearchContract(keyword string) {
-	ecdsapath  := keypairspath + "/ecdsaA"
-	eciespath  := keypairspath + "/eciesA"
+	ecdsapath := keypairspath + "/ecdsaA"
+	eciespath := keypairspath + "/eciesA"
 	kecdsapath := keypairspath + "/ecdsakdc"
-	noncepath  := keypairspath + "/nonce"
+	noncepath := keypairspath + "/nonce"
 
 	// init genaro user
 	user := new(client.GenaroUser)
@@ -500,7 +497,7 @@ func TestSearchContract(keyword string) {
 		}
 
 		ele := Token{
-			Pub: key.Pub,
+			Pub:   key.Pub,
 			Token: token,
 		}
 		tokens = append(tokens, ele)
@@ -509,10 +506,10 @@ func TestSearchContract(keyword string) {
 		key0 := hex.EncodeToString(key.SubKey.Subk0)
 		key1 := hex.EncodeToString(key.SubKey.Subk1)
 		key2 := hex.EncodeToString(key.SubKey.Subk2)
-		fmt.Printf("owner:%s\nkey0:%s\nkey1:%s\nkey2:%s\n",pub,key0,key1,key2)
+		fmt.Printf("owner:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", pub, key0, key1, key2)
 
 		kw := KeyWithPub{
-			Pub: pub,
+			Pub:  pub,
 			Key0: key0,
 			Key1: key1,
 			Key2: key2,

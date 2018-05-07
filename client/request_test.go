@@ -1,23 +1,22 @@
 package client
 
 import (
-	"testing"
+	"bytes"
 	"encoding/hex"
 	"fmt"
-	"genaro-crypto/protobuf"
 	"genaro-crypto/crypto"
+	"genaro-crypto/protobuf"
 	"github.com/golang/protobuf/proto"
-	"bytes"
+	"testing"
 )
 
-var
-(
-	whitelist = []string {
+var (
+	whitelist = []string{
 		"04ab6d46ddeaf7e4e94adf8538c2a70644270314b11cec4d694961dea6c73d3495fce7d02b7bf4157e9a3724c8dffbd04e5d47ccac5cdc4607a9b866af2aae90e1",
 		"042cc6ca86c207d0113e49914430f8e16da5bb633afdd312f064471db1874269071df02cd7f0d819b66aeb02b1fe1b54ffc9417f98e384213ca84ad34363aae889",
 	}
 
-	nwhitelist = []string {
+	nwhitelist = []string{
 		"048c5826fdb1f3c2f8b298bb84d8af84e422cc389ddb8d036f58ce2f21411fe3129ca16b7960109c5245733c7e651faca93b6efd78d74c699ef64ffab22ccc3394",
 		// This public key has existed in whitelist
 		"042cc6ca86c207d0113e49914430f8e16da5bb633afdd312f064471db1874269071df02cd7f0d819b66aeb02b1fe1b54ffc9417f98e384213ca84ad34363aae889",

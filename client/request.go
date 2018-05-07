@@ -1,4 +1,3 @@
-
 // There are five kinds of user's requests to KDC
 // RequestA: 0xa1 smart contract creator calls for keys
 // RequestB: 0xb2 smart contract modifier calls for keys
@@ -9,26 +8,24 @@
 package client
 
 import (
+	"bufio"
 	"bytes"
-	"io"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/golang/protobuf/proto"
-	"crypto/rand"
-	"genaro-crypto/protobuf"
 	"genaro-crypto/crypto"
+	"genaro-crypto/protobuf"
+	"github.com/golang/protobuf/proto"
+	"io"
 	"os"
-	"bufio"
-	"encoding/hex"
 )
 
-var
-(
+var (
 	DefaultCurve = crypto.DefaultCurve
 
 	NonceSize = 8 // bytes
 )
-
 
 // CallRequestA returns a buffer of RequestA. The path is used to store nonce.
 // Nonce will be imported when call RequestA again
@@ -56,12 +53,12 @@ func (user *GenaroUser) CallRequestA(list [][]byte, path string) ([]byte, error)
 	epk := crypto.EciesPubToBytes(&user.Epri.PublicKey, DefaultCurve)
 	lb := bytes.Join(list, []byte(""))
 
-	msg := make([]byte, 1 + len(nonce) + len(sn) + len(epk) +len(lb))
+	msg := make([]byte, 1+len(nonce)+len(sn)+len(epk)+len(lb))
 	copy(msg, ty)
 	copy(msg[1:], nonce)
-	copy(msg[1 + len(nonce):], sn)
-	copy(msg[1 + len(nonce) + len(sn):], epk)
-	copy(msg[1 + len(nonce) + len(sn) + len(epk):], lb)
+	copy(msg[1+len(nonce):], sn)
+	copy(msg[1+len(nonce)+len(sn):], epk)
+	copy(msg[1+len(nonce)+len(sn)+len(epk):], lb)
 
 	// sign message
 	sign, err := crypto.SignMessage(msg, user.Spri)
@@ -71,12 +68,12 @@ func (user *GenaroUser) CallRequestA(list [][]byte, path string) ([]byte, error)
 
 	// marshal as protocol buffer
 	req := &protobuf.Request{
-		Type:	ty,
-		Norf:	nonce,
-		Snon:	sn,
-		Enpk:	epk,
-		List:	list,
-		Smsg:	sign,
+		Type: ty,
+		Norf: nonce,
+		Snon: sn,
+		Enpk: epk,
+		List: list,
+		Smsg: sign,
 	}
 	return proto.Marshal(req)
 }
@@ -88,10 +85,10 @@ func (user *GenaroUser) CallRequestB(fileid []byte) ([]byte, error) {
 	// assemble messages
 	epk := crypto.EciesPubToBytes(&user.Epri.PublicKey, DefaultCurve)
 
-	msg := make([]byte, 1 + len(fileid) + len(epk))
+	msg := make([]byte, 1+len(fileid)+len(epk))
 	copy(msg, ty)
 	copy(msg[1:], fileid)
-	copy(msg[1 + len(fileid):], epk)
+	copy(msg[1+len(fileid):], epk)
 
 	// sign message
 	sign, err := crypto.SignMessage(msg, user.Spri)
@@ -101,10 +98,10 @@ func (user *GenaroUser) CallRequestB(fileid []byte) ([]byte, error) {
 
 	// marshal as protocol buffer
 	req := &protobuf.Request{
-		Type:	ty,
-		Norf:	fileid,
-		Enpk:	epk,
-		Smsg:	sign,
+		Type: ty,
+		Norf: fileid,
+		Enpk: epk,
+		Smsg: sign,
 	}
 	return proto.Marshal(req)
 }
@@ -116,10 +113,10 @@ func (user *GenaroUser) CallRequestC(fileid []byte, list [][]byte) ([]byte, erro
 	// assemble messages )
 	lb := bytes.Join(list, []byte(""))
 
-	msg := make([]byte, 1 + len(fileid) + len(lb))
+	msg := make([]byte, 1+len(fileid)+len(lb))
 	copy(msg, ty)
 	copy(msg[1:], fileid)
-	copy(msg[1 + len(fileid):], lb)
+	copy(msg[1+len(fileid):], lb)
 
 	// sign message
 	sign, err := crypto.SignMessage(msg, user.Spri)
@@ -129,10 +126,10 @@ func (user *GenaroUser) CallRequestC(fileid []byte, list [][]byte) ([]byte, erro
 
 	// marshal as protocol buffer
 	req := &protobuf.Request{
-		Type:	ty,
-		Norf:	fileid,
-		List:	list,
-		Smsg:	sign,
+		Type: ty,
+		Norf: fileid,
+		List: list,
+		Smsg: sign,
 	}
 	return proto.Marshal(req)
 }
@@ -142,7 +139,7 @@ func (user *GenaroUser) CallRequestD(fileid []byte) ([]byte, error) {
 	ty := []byte{0xd4}
 
 	// assemble messages )
-	msg := make([]byte, 1 + len(fileid))
+	msg := make([]byte, 1+len(fileid))
 	copy(msg, ty)
 	copy(msg[1:], fileid)
 
@@ -154,9 +151,9 @@ func (user *GenaroUser) CallRequestD(fileid []byte) ([]byte, error) {
 
 	// marshal as protocol buffer
 	req := &protobuf.Request{
-		Type:	ty,
-		Norf:	fileid,
-		Smsg:	sign,
+		Type: ty,
+		Norf: fileid,
+		Smsg: sign,
 	}
 	return proto.Marshal(req)
 }
@@ -168,10 +165,10 @@ func (user *GenaroUser) CallRequestE(fileid []byte) ([]byte, error) {
 	// assemble messages
 	epk := crypto.EciesPubToBytes(&user.Epri.PublicKey, DefaultCurve)
 
-	msg := make([]byte, 1 + len(fileid) + len(epk))
+	msg := make([]byte, 1+len(fileid)+len(epk))
 	copy(msg, ty)
 	copy(msg[1:], fileid)
-	copy(msg[1 + len(fileid):], epk)
+	copy(msg[1+len(fileid):], epk)
 
 	// sign message
 	sign, err := crypto.SignMessage(msg, user.Spri)
@@ -181,10 +178,10 @@ func (user *GenaroUser) CallRequestE(fileid []byte) ([]byte, error) {
 
 	// marshal as protocol buffer
 	req := &protobuf.Request{
-		Type:	ty,
-		Norf:	fileid,
-		Enpk:	epk,
-		Smsg:	sign,
+		Type: ty,
+		Norf: fileid,
+		Enpk: epk,
+		Smsg: sign,
 	}
 	return proto.Marshal(req)
 }
@@ -204,12 +201,12 @@ func (user *GenaroUser) ReCallRequestA(list [][]byte, path string) ([]byte, erro
 	epk := crypto.EciesPubToBytes(&user.Epri.PublicKey, DefaultCurve)
 	lb := bytes.Join(list, []byte(""))
 
-	msg := make([]byte, 1 + len(nonce) + len(sn) + len(epk) +len(lb))
+	msg := make([]byte, 1+len(nonce)+len(sn)+len(epk)+len(lb))
 	copy(msg, ty)
 	copy(msg[1:], nonce)
-	copy(msg[1 + len(nonce):], sn)
-	copy(msg[1 + len(nonce) + len(sn):], epk)
-	copy(msg[1 + len(nonce) + len(sn) + len(epk):], lb)
+	copy(msg[1+len(nonce):], sn)
+	copy(msg[1+len(nonce)+len(sn):], epk)
+	copy(msg[1+len(nonce)+len(sn)+len(epk):], lb)
 
 	// sign message
 	sign, err := crypto.SignMessage(msg, user.Spri)
@@ -219,12 +216,12 @@ func (user *GenaroUser) ReCallRequestA(list [][]byte, path string) ([]byte, erro
 
 	// marshal as protocol buffer
 	req := &protobuf.Request{
-		Type:	ty,
-		Norf:	nonce,
-		Snon:	sn,
-		Enpk:	epk,
-		List:	list,
-		Smsg:	sign,
+		Type: ty,
+		Norf: nonce,
+		Snon: sn,
+		Enpk: epk,
+		List: list,
+		Smsg: sign,
 	}
 	return proto.Marshal(req)
 }
@@ -251,7 +248,7 @@ func SaveNonce(nonce, snonce []byte, path string) (err error) {
 	var f *os.File
 	if checkFileIsExist(path) {
 		f, _ = os.OpenFile(path, os.O_WRONLY, 0666)
-	}else {
+	} else {
 		f, _ = os.Create(path)
 	}
 	defer f.Close()

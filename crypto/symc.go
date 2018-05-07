@@ -5,13 +5,13 @@
 package crypto
 
 import (
-	"crypto/sha1"
-	"github.com/ethereum/go-ethereum/crypto/sha3"
-	"crypto/cipher"
 	"crypto/aes"
-	"io"
+	"crypto/cipher"
 	"crypto/rand"
+	"crypto/sha1"
 	"errors"
+	"github.com/ethereum/go-ethereum/crypto/sha3"
+	"io"
 )
 
 // SHA1 returns the SHA1 hash of the input data
@@ -40,7 +40,6 @@ func SHA3_512(data ...[]byte) []byte {
 	return d.Sum(nil)
 }
 
-
 // getIV returns an initialisation vector for OFB mode.
 func getIV(blockSize int) ([]byte, error) {
 	iv := make([]byte, blockSize)
@@ -62,7 +61,7 @@ func AESEncryptOFB(key, plaintext []byte) (ciphertext []byte, err error) {
 		return nil, errors.New("AESEncryptCFB: failed to generate IV")
 	}
 
-	ciphertext = make([]byte, block.BlockSize() + len(plaintext))
+	ciphertext = make([]byte, block.BlockSize()+len(plaintext))
 	copy(ciphertext, iv)
 
 	cfb := cipher.NewOFB(block, iv)
@@ -77,7 +76,7 @@ func AESDecryptOFB(key, ciphertext []byte) (plaintext []byte, err error) {
 		return nil, err
 	}
 
-	plaintext = make([]byte, len(ciphertext) - block.BlockSize())
+	plaintext = make([]byte, len(ciphertext)-block.BlockSize())
 
 	cfb := cipher.NewOFB(block, ciphertext[:block.BlockSize()])
 	cfb.XORKeyStream(plaintext, ciphertext[block.BlockSize():])

@@ -1,13 +1,11 @@
 package crypto
 
 import (
-	"testing"
+	"bytes"
 	"encoding/hex"
 	"fmt"
-	"bytes"
+	"testing"
 )
-
-
 
 func TestSHA1(t *testing.T) {
 	msg := "Genaro Network"

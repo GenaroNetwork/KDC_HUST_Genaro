@@ -1,9 +1,9 @@
 package crypto
 
 import (
-	"testing"
-	"fmt"
 	"encoding/hex"
+	"fmt"
+	"testing"
 )
 
 // Test KDF functions
@@ -43,6 +43,7 @@ func BenchmarkKeyGen(b *testing.B) {
 		}
 	}
 }
+
 // Benchmark the generation of sun key
 func BenchmarkKeyDerivFunc(b *testing.B) {
 	salt, err := GetSalt()

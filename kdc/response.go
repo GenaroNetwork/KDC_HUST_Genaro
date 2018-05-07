@@ -8,18 +8,18 @@
 package kdc
 
 import (
-	"fmt"
-	"github.com/golang/protobuf/proto"
-	"genaro-crypto/protobuf"
-	"crypto/ecdsa"
-	"errors"
-	"genaro-crypto/crypto"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	"crypto/rand"
 	"bytes"
+	"crypto/ecdsa"
+	"crypto/rand"
+	"encoding/hex"
+	"errors"
+	"fmt"
+	"genaro-crypto/crypto"
+	"genaro-crypto/protobuf"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
+	"github.com/golang/protobuf/proto"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"encoding/hex"
 )
 
 // ResopndToRequest is a high level encapsulation for kdc functions
@@ -33,12 +33,12 @@ func ResopndToRequest(request []byte, pri *ecdsa.PrivateKey) (response []byte, e
 
 	// verify request buffer
 	list := bytes.Join(req.List, []byte(""))
-	msg := make([]byte, 1 + len(req.Norf) + len(req.Snon) + len(req.Enpk) + len(list))
+	msg := make([]byte, 1+len(req.Norf)+len(req.Snon)+len(req.Enpk)+len(list))
 	copy(msg, req.Type)
 	copy(msg[1:], req.Norf)
-	copy(msg[1 + len(req.Norf):], req.Snon)
-	copy(msg[1 + len(req.Norf) + len(req.Snon):], req.Enpk)
-	copy(msg[1 + len(req.Norf) + len(req.Snon) + len(req.Enpk):], list)
+	copy(msg[1+len(req.Norf):], req.Snon)
+	copy(msg[1+len(req.Norf)+len(req.Snon):], req.Enpk)
+	copy(msg[1+len(req.Norf)+len(req.Snon)+len(req.Enpk):], list)
 	if !crypto.VerifySignNoPub(msg, req.Smsg) {
 		return NegativeResponse([]byte("Request has been tampered"), pri)
 	}
@@ -80,9 +80,9 @@ func ResopndToRequest(request []byte, pri *ecdsa.PrivateKey) (response []byte, e
 }
 
 func HandleRequestA(msg []byte,
-					req *protobuf.Request,
-					pub *ecies.PublicKey,
-					pri *ecdsa.PrivateKey) ([]byte, error) {
+	req *protobuf.Request,
+	pub *ecies.PublicKey,
+	pri *ecdsa.PrivateKey) ([]byte, error) {
 
 	//verify whether  the two public keys from Snon and Smsg are the same
 	pub1, err := crypto.PubFromSign(req.Norf, req.Snon)
@@ -144,8 +144,8 @@ func HandleRequestA(msg []byte,
 }
 
 func HandleRequestB(fileid, spub []byte,
-					epub *ecies.PublicKey,
-					kpri *ecdsa.PrivateKey) ([]byte, error) {
+	epub *ecies.PublicKey,
+	kpri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
@@ -180,8 +180,8 @@ func HandleRequestB(fileid, spub []byte,
 }
 
 func HandleRequestC(fileid, pub []byte,
-					list [][]byte,
-					kpri *ecdsa.PrivateKey) ([]byte, error) {
+	list [][]byte,
+	kpri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
@@ -222,7 +222,7 @@ func HandleRequestC(fileid, pub []byte,
 	return PositiveResponse([]byte(statue), kpri)
 }
 
-func HandleRequestD(fileid, pub []byte) (error) {
+func HandleRequestD(fileid, pub []byte) error {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
@@ -249,8 +249,8 @@ func HandleRequestD(fileid, pub []byte) (error) {
 }
 
 func HandleRequestE(fileid, spub []byte,
-					epub *ecies.PublicKey,
-					kpri *ecdsa.PrivateKey) ([]byte, error) {
+	epub *ecies.PublicKey,
+	kpri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
@@ -258,7 +258,6 @@ func HandleRequestE(fileid, spub []byte,
 		return nil, errors.New("HandleRequestE: failed to connect with local host")
 	}
 	defer session.Close()
-
 
 	msd := session.DB(MskDB)
 	sud := session.DB(SupDB)
@@ -279,18 +278,18 @@ func HandleRequestE(fileid, spub []byte,
 
 // 0xab, respond keys which belong to the pub
 func ExpectedResponse(fileid []byte,
-	                  keys *SubKey,
-	                  pub *ecies.PublicKey,
-	                  pri *ecdsa.PrivateKey) ([]byte, error) {
+	keys *SubKey,
+	pub *ecies.PublicKey,
+	pri *ecdsa.PrivateKey) ([]byte, error) {
 
 	ty := []byte{0xab}
 
 	// assemble response
-	m := make([]byte, crypto.SubkLen * 3 + len(fileid))
+	m := make([]byte, crypto.SubkLen*3+len(fileid))
 	copy(m, keys.Subk0)
 	copy(m[crypto.SubkLen:], keys.Subk1)
-	copy(m[crypto.SubkLen * 2:], keys.Subk2)
-	copy(m[crypto.SubkLen * 3:], fileid)
+	copy(m[crypto.SubkLen*2:], keys.Subk2)
+	copy(m[crypto.SubkLen*3:], fileid)
 
 	// encrypt keys and fileid by client's ecies public key
 	c, err := crypto.EciesEncrypt(rand.Reader, pub, m)
@@ -299,7 +298,7 @@ func ExpectedResponse(fileid []byte,
 	}
 
 	// assemble message
-	msg := make([]byte, 1 + len(c))
+	msg := make([]byte, 1+len(c))
 	copy(msg, ty)
 	copy(msg[1:], c)
 
@@ -311,9 +310,9 @@ func ExpectedResponse(fileid []byte,
 
 	// marshal as protocol buffer
 	rep := &protobuf.Response{
-		Type:	ty,
-		Cora:   c,
-		Smsg:	sign,
+		Type: ty,
+		Cora: c,
+		Smsg: sign,
 	}
 	return proto.Marshal(rep)
 }
@@ -323,7 +322,7 @@ func PositiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	ty := []byte{0xcd}
 
 	// assemble messages
-	msg := make([]byte, 1 + len(state))
+	msg := make([]byte, 1+len(state))
 	copy(msg, ty)
 	copy(msg[1:], state)
 
@@ -335,9 +334,9 @@ func PositiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// marshal as protocol buffer
 	rep := &protobuf.Response{
-		Type:	ty,
-		Cora:   state,
-		Smsg:	sign,
+		Type: ty,
+		Cora: state,
+		Smsg: sign,
 	}
 	return proto.Marshal(rep)
 }
@@ -347,7 +346,7 @@ func NegativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	ty := []byte{0x00}
 
 	// assemble messages
-	msg := make([]byte, 1 + len(reason))
+	msg := make([]byte, 1+len(reason))
 	copy(msg, ty)
 	copy(msg[1:], reason)
 
@@ -359,28 +358,28 @@ func NegativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// marshal as protocol buffer
 	rep := &protobuf.Response{
-		Type:	ty,
-		Cora:   reason,
-		Smsg:	sign,
+		Type: ty,
+		Cora: reason,
+		Smsg: sign,
 	}
 	return proto.Marshal(rep)
 }
 
 // 0xef respond all the keys of fileid
 func AllKeysResponse(fileid []byte,
-					 keys []*KeyOwner,
-					 pub *ecies.PublicKey,
-					 pri *ecdsa.PrivateKey) ([]byte, error) {
+	keys []*KeyOwner,
+	pub *ecies.PublicKey,
+	pri *ecdsa.PrivateKey) ([]byte, error) {
 
 	ty := []byte{0xef}
 
 	// encapsulate all encrypted keys
 	var ras []*protobuf.ResponseAllkeys
 	for _, ko := range keys {
-		k := make([]byte, crypto.SubkLen * 3)
+		k := make([]byte, crypto.SubkLen*3)
 		copy(k, ko.Subk0)
 		copy(k[crypto.SubkLen:], ko.Subk1)
-		copy(k[crypto.SubkLen * 2:], ko.Subk2)
+		copy(k[crypto.SubkLen*2:], ko.Subk2)
 
 		// encrypt key by ecies pub
 		ek, err := crypto.EciesEncrypt(rand.Reader, pub, k)
@@ -397,10 +396,10 @@ func AllKeysResponse(fileid []byte,
 
 	// assemble messages
 	eks := EkeysToBytes(ras)
-	msg := make([]byte, 1 + len(fileid) + len(eks))
+	msg := make([]byte, 1+len(fileid)+len(eks))
 	copy(msg, ty)
 	copy(msg[1:], fileid)
-	copy(msg[1 + len(fileid):], eks)
+	copy(msg[1+len(fileid):], eks)
 
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
@@ -410,10 +409,10 @@ func AllKeysResponse(fileid []byte,
 
 	// marshal as protocol buffer
 	rep := &protobuf.Response{
-		Type:	ty,
-		Cora:   fileid,
-		Keys:   ras,
-		Smsg:	sign,
+		Type: ty,
+		Cora: fileid,
+		Keys: ras,
+		Smsg: sign,
 	}
 	return proto.Marshal(rep)
 }

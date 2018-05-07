@@ -3,8 +3,8 @@ package crypto
 import (
 	"bytes"
 	"encoding/hex"
-	"testing"
 	"fmt"
+	"testing"
 )
 
 var key = []byte("key for HMAC testing")

@@ -6,22 +6,20 @@ package crypto
 
 import (
 	"bytes"
-	"io"
-	"crypto/rand"
 	"crypto/aes"
+	"crypto/rand"
 	"errors"
 	"fmt"
+	"io"
 )
 
-const
-(
+const (
 	// The length of searchable ciphertext
 	SSize = 64
 
 	// The length of the right part of search token
 	Rtoken = 16
 )
-
 
 // SPadding pads the keyword as long as a searchable ciphertext
 // The padded keyword cannot be restored
@@ -33,7 +31,7 @@ func SPadding(keyword []byte) []byte {
 	if len(keyword) > SSize {
 		return SHA3_512(keyword)
 	}
-	 paddingCount := SSize - len(keyword)
+	paddingCount := SSize - len(keyword)
 	return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
 }
 
@@ -51,7 +49,7 @@ func XORBytes(dst, a, b []byte) int {
 
 // AESEncryptECB is a deterministic encryption algorithm used in SSE sechme
 func AESEncryptECB(key, plaintext []byte) (cipher []byte, err error) {
-	if len(plaintext) % aes.BlockSize != 0 {
+	if len(plaintext)%aes.BlockSize != 0 {
 		return nil, errors.New("AESEncryptECB: plaintext size error")
 
 	}
@@ -66,8 +64,8 @@ func AESEncryptECB(key, plaintext []byte) (cipher []byte, err error) {
 
 	// encrypt plaintext by block
 	for index := 0; index < len(plaintext); index += aes.BlockSize {
-		block.Encrypt(bcipher, plaintext[index:index + aes.BlockSize])
-		copy(cipher[index:index + aes.BlockSize], bcipher)
+		block.Encrypt(bcipher, plaintext[index:index+aes.BlockSize])
+		copy(cipher[index:index+aes.BlockSize], bcipher)
 	}
 	return cipher, nil
 
@@ -75,7 +73,7 @@ func AESEncryptECB(key, plaintext []byte) (cipher []byte, err error) {
 
 // AESDecryptECB returns the plaintext of the input cipher
 func AESDecryptECB(key, cipher []byte) (plaintext []byte, err error) {
-	if len(cipher) % aes.BlockSize != 0 {
+	if len(cipher)%aes.BlockSize != 0 {
 		return nil, errors.New("AESDecryptECB: cipher size error")
 
 	}
@@ -90,8 +88,8 @@ func AESDecryptECB(key, cipher []byte) (plaintext []byte, err error) {
 
 	// decrypt plaintext by block
 	for index := 0; index < len(cipher); index += aes.BlockSize {
-		block.Decrypt(bplain, cipher[index:index + aes.BlockSize])
-		copy(plaintext[index:index + aes.BlockSize], bplain)
+		block.Decrypt(bplain, cipher[index:index+aes.BlockSize])
+		copy(plaintext[index:index+aes.BlockSize], bplain)
 	}
 	return plaintext, nil
 
@@ -127,13 +125,13 @@ func SearchableEnc(keyword, key1, key2 []byte) (scipher []byte, err error) {
 	}
 
 	// generate stream ciphertext
-    right := HMAC(left, key3)
-    sc := make([]byte, SSize)
-    copy(sc, left)
-    copy(sc[rlen:], right)
+	right := HMAC(left, key3)
+	sc := make([]byte, SSize)
+	copy(sc, left)
+	copy(sc[rlen:], right)
 
-    // generate searchable ciphertext
-    scipher = make([]byte, SSize)
+	// generate searchable ciphertext
+	scipher = make([]byte, SSize)
 	XORBytes(scipher, dc, sc)
 	return scipher, nil
 }
@@ -153,8 +151,8 @@ func Trapdoor(keyword, key1, key2 []byte) (token []byte, err error) {
 	rtoken := KeyDerive(key2, ltoken, Rtoken)
 
 	// generate token
-	token = make([]byte, SSize + Rtoken)
-    copy(token, ltoken)
+	token = make([]byte, SSize+Rtoken)
+	copy(token, ltoken)
 	copy(token[SSize:], rtoken)
 	return token, nil
 }

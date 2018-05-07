@@ -1,16 +1,14 @@
 package crypto
 
 import (
-
+	"bytes"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"testing"
-	"crypto/rand"
-	"bytes"
-	"encoding/hex"
 )
 
-var
-(
+var (
 	ecieskeypath = "eciestest"
 	message      = []byte("Genaro Network")
 	testcipher   = "048931adf3310ee06db7e5c37179ad905891b54dd568af058a1273f7d875d5298b7059efb8ab631a5e1d15a031c26" +
@@ -100,7 +98,7 @@ func TestTransformKey(t *testing.T) {
 	// test transformation of ecies key pair
 	ekp.EciesKeyToBytes(epri, DefaultCurve)
 	fmt.Println(ekp.Pk, "\n", ekp.Sk)
-	p2, err:= BytesToEciesKey(ekp.Pk, ekp.Sk, DefaultCurve)
+	p2, err := BytesToEciesKey(ekp.Pk, ekp.Sk, DefaultCurve)
 	if err != nil {
 		panic(err)
 	}

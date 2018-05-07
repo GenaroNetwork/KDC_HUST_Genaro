@@ -5,23 +5,22 @@
 package crypto
 
 import (
-	"crypto/sha256"
 	"crypto/rand"
-	"io"
-	"golang.org/x/crypto/pbkdf2"
 	"crypto/sha1"
+	"crypto/sha256"
+	"golang.org/x/crypto/pbkdf2"
+	"io"
 )
 
-const
-(
+const (
 	// iterations of pbkdf2 algorithm
-	Iter    = 10000
+	Iter = 10000
 
 	// salt size
 	SaltLen = 8
 
 	// mater key size
-	MskLen  = 16
+	MskLen = 16
 
 	// sub key size
 	SubkLen = 32
@@ -51,6 +50,6 @@ func KeyDerivFunc(msk, salt []byte) []byte {
 }
 
 // KeyDerive returns new key
-func KeyDerive(key,  reference []byte, len int) []byte {
-	return pbkdf2.Key(key,  reference, Iter, len, sha1.New)
+func KeyDerive(key, reference []byte, len int) []byte {
+	return pbkdf2.Key(key, reference, Iter, len, sha1.New)
 }
