@@ -16,9 +16,11 @@ gopkg.in/mgo.v2                  branch v2      branch v2      3f83fa5   3f83fa5
 
 ## Run example code
 
-A running MongoDB is required to run example
+A running MongoDB is required to run example. The following command shoud be run inside your [GOPATH](https://github.com/golang/go/wiki/GOPATH)
 
 ```
+git clone https://github.com/GenaroNetwork/KDC_HUST_Genaro.git genaro-crypto
+cd genaro-crypto
 go build -o ./example/bin/example ./example
 cd example/bin/
 ./example
