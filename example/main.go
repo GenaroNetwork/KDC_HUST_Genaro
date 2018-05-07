@@ -2,25 +2,26 @@ package main
 
 import (
 	"fmt"
+
 	"gopkg.in/mgo.v2"
 )
 
-var
-(
-	ACreat = "../json/initial.json"
+var (
+	// ACreat test file
+	ACreat = "./json/initial.json"
 
 	// This id is just used in TestCoreFunctions
 	fileid = "5bf98c8eede891f1ab36a40e745f37c803ec69bc"
 
-	AChange = "../json/modifiedbyA.json"
+	AChange = "./json/modifiedbyA.json"
 
-	BChange = "../json/modifiedbyB.json"
+	BChange = "./json/modifiedbyB.json"
 
-	CChange = "../json/modifiedbyC.json"
+	CChange = "./json/modifiedbyC.json"
 
-	AChangeA = "../json/modifiedbyAagain.json"
+	AChangeA = "./json/modifiedbyAagain.json"
 
-	keypairspath = "../keypairs"
+	keypairspath = "./keypairs"
 
 	EkvDB = "EnKeyValues"
 )
@@ -36,18 +37,17 @@ type Token struct {
 }
 
 type EValues struct {
-	Pub  []byte
-	EVs  [][]byte
+	Pub []byte
+	EVs [][]byte
 }
 
 type KeyWithPub struct {
 	Pub, Key0, Key1, Key2 string
 }
 
-var
-(
+var (
 	// These keys are just used in TestCoreFunctions
-	testkeys = []KeyWithPub {
+	testkeys = []KeyWithPub{
 		{
 			// A
 			"041bcf290fa63d7279bddb8733f4684099bb21a33af2b34234c00bf249799aebcee0a195a509379f4815d6c5e3277ab73e6987c93fb22aca808b1f70d55ed4db5c",
@@ -71,19 +71,18 @@ var
 		},
 	}
 
-	whitelist = []string {
+	whitelist = []string{
 		"04ab6d46ddeaf7e4e94adf8538c2a70644270314b11cec4d694961dea6c73d3495fce7d02b7bf4157e9a3724c8dffbd04e5d47ccac5cdc4607a9b866af2aae90e1",
 		"042cc6ca86c207d0113e49914430f8e16da5bb633afdd312f064471db1874269071df02cd7f0d819b66aeb02b1fe1b54ffc9417f98e384213ca84ad34363aae889",
 	}
 
-	nwhitelist = []string {
+	nwhitelist = []string{
 		// D
 		"048c5826fdb1f3c2f8b298bb84d8af84e422cc389ddb8d036f58ce2f21411fe3129ca16b7960109c5245733c7e651faca93b6efd78d74c699ef64ffab22ccc3394",
 		// This public key has existed in whitelist
 		"042cc6ca86c207d0113e49914430f8e16da5bb633afdd312f064471db1874269071df02cd7f0d819b66aeb02b1fe1b54ffc9417f98e384213ca84ad34363aae889",
 	}
 )
-
 
 // the test key for search
 var keyword = "devDependencies.new.url-loader"
@@ -106,7 +105,6 @@ func main() {
 
 	ClearCiphertextDatabase()
 
-
 }
 
 func ClearCiphertextDatabase() {
@@ -118,4 +116,3 @@ func ClearCiphertextDatabase() {
 
 	session.DB(EkvDB).DropDatabase()
 }
-

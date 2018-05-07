@@ -9,19 +9,20 @@
 package crypto
 
 import (
-	"crypto/elliptic"
-	"fmt"
-	"github.com/ethereum/go-ethereum/crypto/ecies"
-	"github.com/ethereum/go-ethereum/common/math"
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
-	"io"
+	"bufio"
 	"bytes"
 	"crypto/ecdsa"
-	"math/big"
-	"errors"
+	"crypto/elliptic"
 	"encoding/hex"
+	"errors"
+	"fmt"
+	"io"
+	"math/big"
 	"os"
-	"bufio"
+
+	"github.com/ethereum/go-ethereum/common/math"
+	ethcrypto "github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/crypto/ecies"
 )
 
 // KeyPairs is the character encoding form of public-private key pairs
@@ -44,7 +45,7 @@ func EciesEncrypt(rand io.Reader, pub *ecies.PublicKey, msg []byte) (cipher []by
 
 // EciesDecrypt decrypts the ecies ciphertext to get message
 func EciesDecrypt(rand io.Reader, cipher []byte, pri *ecies.PrivateKey) (msg []byte, err error) {
-	msg, err = pri.Decrypt(rand, cipher, nil, nil)
+	msg, err = pri.Decrypt(cipher, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func VerifySignature(msg, sign []byte, pub *ecdsa.PublicKey) bool {
 	}
 
 	// Verify Signature
-	if !ethcrypto.VerifySignature(bpub, hash, sign[:len(sign) -1]) {
+	if !ethcrypto.VerifySignature(bpub, hash, sign[:len(sign)-1]) {
 		return false
 	}
 	return true
@@ -104,7 +105,7 @@ func VerifySignNoPub(msg, sign []byte) bool {
 	}
 
 	// Verify Signature
-	if !ethcrypto.VerifySignature(rpub, hash, sign[:len(sign) -1]) {
+	if !ethcrypto.VerifySignature(rpub, hash, sign[:len(sign)-1]) {
 		return false
 	}
 	return true
