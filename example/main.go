@@ -8,20 +8,20 @@ import (
 
 var (
 	// ACreat test file
-	ACreat = "./json/initial.json"
+	ACreat = "../json/initial.json"
 
 	// This id is just used in TestCoreFunctions
 	fileid = "5bf98c8eede891f1ab36a40e745f37c803ec69bc"
 
-	AChange = "./json/modifiedbyA.json"
+	AChange = "../json/modifiedbyA.json"
 
-	BChange = "./json/modifiedbyB.json"
+	BChange = "../json/modifiedbyB.json"
 
-	CChange = "./json/modifiedbyC.json"
+	CChange = "../json/modifiedbyC.json"
 
-	AChangeA = "./json/modifiedbyAagain.json"
+	AChangeA = "../json/modifiedbyAagain.json"
 
-	keypairspath = "./keypairs"
+	keypairspath = "../keypairs"
 
 	EkvDB = "EnKeyValues"
 )
