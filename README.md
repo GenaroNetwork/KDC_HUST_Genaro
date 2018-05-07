@@ -29,5 +29,5 @@ cd example/bin/
 ## Recommended develop environment
 
 1. Visual Studio Code
-2. Go support: https://marketplace.visualstudio.com/items?itemName=ms-vscode.Go
-3. **Dep** for vendor manage: https://github.com/golang/dep
+2. [Go support](https://marketplace.visualstudio.com/items?itemName=ms-vscode.Go) for Visual Studio Code
+3. [**Dep**](https://github.com/golang/dep) for vendor manage
