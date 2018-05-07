@@ -30,7 +30,7 @@ func TestEciesEncryptDecrypt(t *testing.T) {
 	}
 
 	// decrypt newly generated cipher
-	pt, err := EciesDecrypt(rand.Reader, ct, pri)
+	pt, err := EciesDecrypt(ct, pri)
 	if err != nil {
 		panic(err)
 	}
@@ -43,7 +43,7 @@ func TestEciesEncryptDecrypt(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	pt1, err := EciesDecrypt(rand.Reader, ct1, pri)
+	pt1, err := EciesDecrypt(ct1, pri)
 	if err != nil {
 		panic(err)
 	}

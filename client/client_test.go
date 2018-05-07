@@ -24,7 +24,7 @@ var (
 
 func TestUserInitLoadPublicKey(t *testing.T) {
 	user := new(GenaroUser)
-	err := user.LoadAsyKey("./testdata/ecdsaA", "./testdata/eciesB")
+	err := user.LoadAsyKey("./testdata/ecdsaA", "./testdata/eciesA")
 	if err != nil {
 		panic(err)
 	}

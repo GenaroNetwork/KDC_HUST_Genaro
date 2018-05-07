@@ -3,7 +3,6 @@ package client
 import (
 	"bytes"
 	"crypto/ecdsa"
-	"crypto/rand"
 	"errors"
 	"fmt"
 	"genaro-crypto/crypto"
@@ -116,7 +115,7 @@ func (user *GenaroUser) GetResponseA(rep []byte, path string,
 	}
 
 	// Request was responded correctly. m = key0||key1||key2||fileid
-	m, err := crypto.EciesDecrypt(rand.Reader, rp.Cora, user.Epri)
+	m, err := crypto.EciesDecrypt(rp.Cora, user.Epri)
 	if err != nil {
 		return nil, nil, nil, errors.New("GetResponseA: something wrong with decryption")
 	}
@@ -170,7 +169,7 @@ func (user *GenaroUser) GetResponseB(rep, fileid []byte, pub *ecdsa.PublicKey,
 	}
 
 	// Request was responded correctly. m = key0||key1||key2||fileid
-	m, err := crypto.EciesDecrypt(rand.Reader, rp.Cora, user.Epri)
+	m, err := crypto.EciesDecrypt(rp.Cora, user.Epri)
 	if err != nil {
 		return nil, nil, errors.New("GetResponseB: something wrong with decryption")
 	}
@@ -255,7 +254,7 @@ func (user *GenaroUser) GetResponseE(rep, fileid []byte, pub *ecdsa.PublicKey,
 	}
 
 	for _, ko := range rp.Keys {
-		m, err := crypto.EciesDecrypt(rand.Reader, ko.Enk, user.Epri)
+		m, err := crypto.EciesDecrypt(ko.Enk, user.Epri)
 		if err != nil {
 			return nil, nil, errors.New("GetResponseC: something wrong with decryption")
 		}

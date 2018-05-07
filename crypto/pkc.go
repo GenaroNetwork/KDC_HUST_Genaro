@@ -44,7 +44,7 @@ func EciesEncrypt(rand io.Reader, pub *ecies.PublicKey, msg []byte) (cipher []by
 }
 
 // EciesDecrypt decrypts the ecies ciphertext to get message
-func EciesDecrypt(rand io.Reader, cipher []byte, pri *ecies.PrivateKey) (msg []byte, err error) {
+func EciesDecrypt(cipher []byte, pri *ecies.PrivateKey) (msg []byte, err error) {
 	msg, err = pri.Decrypt(cipher, nil, nil)
 	if err != nil {
 		return nil, err
