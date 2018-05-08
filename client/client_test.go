@@ -32,31 +32,9 @@ func TestUserInitLoadPublicKey(t *testing.T) {
 
 func TestEnValueEncDec(t *testing.T) {
 	// generate keys
-	msk, err := crypto.KeyGen()
-	if err != nil {
-		panic(err)
-	}
-<<<<<<< HEAD
-	esalt, err := crypto.GetSalt()
-	if err != nil {
-		panic(err)
-	}
-	ssalt, err := crypto.GetSalt()
-=======
-	salt0, err := crypto.SaltGen()
-	if err != nil {
-		panic(err)
-	}
-	salt1, err := crypto.SaltGen()
-	if err != nil {
-		panic(err)
-	}
-	salt2, err := crypto.SaltGen()
->>>>>>> e29cd518bcd86594ff6ebfd6004c41bac20b0cdd
-	if err != nil {
-		panic(err)
-	}
-
+	msk := crypto.KeyGen()
+	esalt := crypto.SaltGen()
+	ssalt := crypto.SaltGen()
 	keys := &kdc.SubKey{
 		EKey: crypto.KeyDerivFunc(msk, esalt, crypto.EKeyLen),
 		SKey: crypto.KeyDerivFunc(msk, ssalt, crypto.SKeyLen),

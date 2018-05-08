@@ -23,24 +23,23 @@ const (
 
 )
 
-// SaltGen returns a salt value
-func SaltGen() ([]byte, error) {
-	salt := make([]byte, SaltLen)
-	_, err := io.ReadFull(rand.Reader, salt)
+func randomBytes(size uint32) []byte {
+	bytes := make([]byte, size)
+	_, err := io.ReadFull(rand.Reader, bytes)
 	if err != nil {
 		panic(err)
 	}
-	return salt, nil
+	return bytes
+}
+
+// SaltGen returns a salt value
+func SaltGen() []byte {
+	return randomBytes(SaltLen)
 }
 
 // KeyGen returns a master key
-func KeyGen() ([]byte, error) {
-	msk := make([]byte, MskLen)
-	_, err := io.ReadFull(rand.Reader, msk)
-	if err != nil {
-		panic(err)
-	}
-	return msk, nil
+func KeyGen() []byte {
+	return randomBytes(MskLen)
 }
 
 // KeyDerivFunc generates sub key according to master key and salt
