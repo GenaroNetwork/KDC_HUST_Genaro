@@ -285,11 +285,10 @@ func ExpectedResponse(fileid []byte,
 	ty := []byte{0xab}
 
 	// assemble response
-	m := make([]byte, crypto.SubkLen*3+len(fileid))
-	copy(m, keys.Subk0)
-	copy(m[crypto.SubkLen:], keys.Subk1)
-	copy(m[crypto.SubkLen*2:], keys.Subk2)
-	copy(m[crypto.SubkLen*3:], fileid)
+	m := make([]byte, crypto.EKeyLen+crypto.SKeyLen+len(fileid))
+	copy(m, keys.EKey)
+	copy(m[crypto.EKeyLen:], keys.SKey)
+	copy(m[crypto.EKeyLen+crypto.SKeyLen:], fileid)
 
 	// encrypt keys and fileid by client's ecies public key
 	c, err := crypto.EciesEncrypt(rand.Reader, pub, m)
@@ -376,10 +375,9 @@ func AllKeysResponse(fileid []byte,
 	// encapsulate all encrypted keys
 	var ras []*protobuf.ResponseAllkeys
 	for _, ko := range keys {
-		k := make([]byte, crypto.SubkLen*3)
-		copy(k, ko.Subk0)
-		copy(k[crypto.SubkLen:], ko.Subk1)
-		copy(k[crypto.SubkLen*2:], ko.Subk2)
+		k := make([]byte, crypto.EKeyLen+crypto.SKeyLen)
+		copy(k, ko.EKey)
+		copy(k[crypto.EKeyLen:], ko.SKey)
 
 		// encrypt key by ecies pub
 		ek, err := crypto.EciesEncrypt(rand.Reader, pub, k)

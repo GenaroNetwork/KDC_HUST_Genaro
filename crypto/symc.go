@@ -14,6 +14,12 @@ import (
 	"io"
 )
 
+var
+(
+	// The length of symmetric encryption key
+	EKeyLen = 32
+)
+
 // SHA1 returns the SHA1 hash of the input data
 func SHA1(data []byte) (digest [sha1.Size]byte) {
 	h := sha1.New()

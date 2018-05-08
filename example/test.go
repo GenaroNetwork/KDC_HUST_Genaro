@@ -121,10 +121,9 @@ func TestSearch() {
 	var tokens []Token
 	for _, key := range testkeys {
 		pub, _ := hex.DecodeString(key.Pub)
-		key1, _ := hex.DecodeString(key.Key1)
-		key2, _ := hex.DecodeString(key.Key2)
+		skey, _ := hex.DecodeString(key.SKey)
 
-		token, err := crypto.Trapdoor([]byte(keyword), key1, key2)
+		token, err := crypto.Trapdoor([]byte(keyword), skey)
 		if err != nil {
 			panic(err)
 		}
@@ -205,18 +204,16 @@ func TestUploadContract() {
 	}
 
 	id := hex.EncodeToString(fileid)
-	key0 := hex.EncodeToString(keys.Subk0)
-	key1 := hex.EncodeToString(keys.Subk1)
-	key2 := hex.EncodeToString(keys.Subk2)
-	fmt.Printf("ans:%s\nfileid:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", string(ans), id, key0, key1, key2)
+	ekey := hex.EncodeToString(keys.EKey)
+	skey := hex.EncodeToString(keys.SKey)
+	fmt.Printf("ans:%s\nfileid:%s\nekey:%s\nskey:%s\n", string(ans), id, ekey, skey)
 
 	owner := crypto.EcdsaPubToBytes(&user.Spri.PublicKey, crypto.DefaultCurve)
 	pub := hex.EncodeToString(owner)
 	kw := KeyWithPub{
 		Pub:  pub,
-		Key0: key0,
-		Key1: key1,
-		Key2: key2,
+		EKey: ekey,
+		SKey: skey,
 	}
 
 	// parse json file
@@ -284,18 +281,16 @@ func TestModifyContract() {
 		panic(err)
 	}
 
-	key0 := hex.EncodeToString(keys.Subk0)
-	key1 := hex.EncodeToString(keys.Subk1)
-	key2 := hex.EncodeToString(keys.Subk2)
-	fmt.Printf("ans:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", string(ans), key0, key1, key2)
+	ekey := hex.EncodeToString(keys.EKey)
+	skey := hex.EncodeToString(keys.SKey)
+	fmt.Printf("ans:%s\nekey:%s\nskey:%s\n", string(ans), ekey, skey)
 
 	owner := crypto.EcdsaPubToBytes(&user.Spri.PublicKey, crypto.DefaultCurve)
 	pub := hex.EncodeToString(owner)
 	kw := KeyWithPub{
 		Pub:  pub,
-		Key0: key0,
-		Key1: key1,
-		Key2: key2,
+		EKey: ekey,
+		SKey: skey,
 	}
 
 	// parse json file
@@ -414,16 +409,14 @@ func TestDecryptContract() {
 	var kws []KeyWithPub
 	for _, key := range keys {
 		pub := hex.EncodeToString(key.Pub)
-		key0 := hex.EncodeToString(key.SubKey.Subk0)
-		key1 := hex.EncodeToString(key.SubKey.Subk1)
-		key2 := hex.EncodeToString(key.SubKey.Subk2)
-		fmt.Printf("owner:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", pub, key0, key1, key2)
+		ekey := hex.EncodeToString(key.SubKey.EKey)
+		skey := hex.EncodeToString(key.SubKey.SKey)
+		fmt.Printf("owner:%s\nekey:%s\nkey:%s\n", pub, ekey, skey)
 
 		kw := KeyWithPub{
 			Pub:  pub,
-			Key0: key0,
-			Key1: key1,
-			Key2: key2,
+			EKey: ekey,
+			SKey: skey,
 		}
 		kws = append(kws, kw)
 	}
@@ -491,7 +484,7 @@ func TestSearchContract(keyword string) {
 	var kws []KeyWithPub
 	var tokens []Token
 	for _, key := range keys {
-		token, err := crypto.Trapdoor([]byte(keyword), key.SubKey.Subk1, key.SubKey.Subk2)
+		token, err := crypto.Trapdoor([]byte(keyword), key.SubKey.SKey)
 		if err != nil {
 			panic(err)
 		}
@@ -503,16 +496,14 @@ func TestSearchContract(keyword string) {
 		tokens = append(tokens, ele)
 
 		pub := hex.EncodeToString(key.Pub)
-		key0 := hex.EncodeToString(key.SubKey.Subk0)
-		key1 := hex.EncodeToString(key.SubKey.Subk1)
-		key2 := hex.EncodeToString(key.SubKey.Subk2)
-		fmt.Printf("owner:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", pub, key0, key1, key2)
+		ekey := hex.EncodeToString(key.SubKey.EKey)
+		skey := hex.EncodeToString(key.SubKey.SKey)
+		fmt.Printf("owner:%s\nekey:%s\nkey:%s\n", pub, ekey, skey)
 
 		kw := KeyWithPub{
 			Pub:  pub,
-			Key0: key0,
-			Key1: key1,
-			Key2: key2,
+			EKey: ekey,
+			SKey: skey,
 		}
 		kws = append(kws, kw)
 	}

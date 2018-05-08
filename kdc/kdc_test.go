@@ -194,7 +194,20 @@ func TestKeyGenAndReturn(t *testing.T) {
 }
 
 func printSubKey(key *SubKey) {
-	fmt.Println("subkey0:" + hex.EncodeToString(key.Subk0))
-	fmt.Println("subkey1:" + hex.EncodeToString(key.Subk1))
-	fmt.Println("subkey2:" + hex.EncodeToString(key.Subk2))
+	fmt.Println("EKey:" + hex.EncodeToString(key.EKey))
+	fmt.Println("Skey:" + hex.EncodeToString(key.SKey))
+}
+
+func TestDeletetestDB(t *testing.T) {
+	session, err := mgo.Dial("localhost")
+	if err != nil {
+		fmt.Println("failed to connect with local host")
+	}
+	defer session.Close()
+
+	msd := session.DB(testDB)
+	err = msd.DropDatabase()
+	if err != nil {
+		fmt.Println(err)
+	}
 }

@@ -20,7 +20,7 @@ func TestKDF(t *testing.T) {
 	}
 	fmt.Println(len(msk), msk)
 
-	sk := KeyDerivFunc(msk, salt)
+	sk := KeyDerivFunc(msk, salt, 32)
 	fmt.Println(len(sk), sk)
 }
 
@@ -44,7 +44,7 @@ func BenchmarkKeyGen(b *testing.B) {
 	}
 }
 
-// Benchmark the generation of sun key
+// Benchmark the generation of sub key
 func BenchmarkKeyDerivFunc(b *testing.B) {
 	salt, err := GetSalt()
 	if err != nil {
@@ -60,7 +60,7 @@ func BenchmarkKeyDerivFunc(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = KeyDerivFunc(msk, salt)
+		_ = KeyDerivFunc(msk, salt,32)
 	}
 }
 
@@ -76,7 +76,7 @@ func TestKeyDerivFunce(t *testing.T) {
 	}
 
 	for i := 0; i < 5; i++ {
-		sub := KeyDerivFunc(msk, salt)
+		sub := KeyDerivFunc(msk, salt,32)
 		fmt.Println(hex.EncodeToString(sub))
 	}
 }

@@ -17,6 +17,9 @@ const (
 	// The length of searchable ciphertext
 	SSize = 64
 
+	// The length of searchable encryption key
+	SKeyLen = 32
+
 	// The length of the right part of search token
 	Rtoken = 16
 )
@@ -105,8 +108,10 @@ func GetRandom(len int) ([]byte, error) {
 }
 
 // SearchableEnc generates a searchable ciphertext for the keyword
-func SearchableEnc(keyword, key1, key2 []byte) (scipher []byte, err error) {
+func SearchableEnc(keyword, skey []byte) (scipher []byte, err error) {
 	word := SPadding(keyword)
+    key1 := skey[:SKeyLen/2]
+    key2 := skey[SKeyLen/2:]
 
 	// generate deterministic ciphertext
 	dc, err := AESEncryptECB(key1, word)
@@ -115,7 +120,7 @@ func SearchableEnc(keyword, key1, key2 []byte) (scipher []byte, err error) {
 	}
 
 	// generate key3
-	key3 := KeyDerive(key2, dc, Rtoken)
+	key3 := KeyDerivFunc(key2, dc, Rtoken)
 
 	// generate random stream
 	rlen := SSize - HMACSize
@@ -137,8 +142,10 @@ func SearchableEnc(keyword, key1, key2 []byte) (scipher []byte, err error) {
 }
 
 // Trapdoor generates a keyword search token
-func Trapdoor(keyword, key1, key2 []byte) (token []byte, err error) {
+func Trapdoor(keyword, skey []byte) (token []byte, err error) {
 	word := SPadding(keyword)
+	key1 := skey[:SKeyLen/2]
+	key2 := skey[SKeyLen/2:]
 
 	// generate left token
 	ltoken := make([]byte, SSize)
@@ -148,7 +155,7 @@ func Trapdoor(keyword, key1, key2 []byte) (token []byte, err error) {
 	}
 
 	// generate right token
-	rtoken := KeyDerive(key2, ltoken, Rtoken)
+	rtoken := KeyDerivFunc(key2, ltoken, Rtoken)
 
 	// generate token
 	token = make([]byte, SSize+Rtoken)

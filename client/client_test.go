@@ -10,11 +10,11 @@ import (
 
 var (
 	responsetbuf = map[string]string{
-		"responseA":      "0a01ab12e50104979010b029bcf0d1543b9f561bde65737f46538afb4c18eede6f6d6e86ee819818f9d29a991b362698f337f994e31ed45622330c1ac83f285face19fc3d61bf933366c9e31499e15d91a492e0561cab409bd5197a2915a1873e1beeba1ce7ca1e1c67aa5eb4d3a425fd52beff565ac60d4eee0d3687f94b13211b847396cd5e16dbed6dbc4e0e533876692f1886b3d74812d798925bd7ed52c09f081c8cfbb4b8fc221d5585dcb5958d0979c7ed1fec2245fbe3e7023a4788f1e627e03eb0ec0b0b7338402d6fae3cdfd6be3bab04b1ca83f25c6d1842dfc58e65f30e320eed438c814c02241b25c599267acf98684966eadccb050f195ce89f97eb4aef753f11c256f8e428f54cd589b8318499ea450d47a0b9396f3939ebaf3fea0eae33566f31600aa785000",
-		"responseB":      "0a01ab12e501040b0c6fa16c753846ac5b6b6eca585e6940441bcb27672f0666414c1caf9dbbddf7d0b9a793d4fa52edc638564304215daebd18880ce6484bbbbb7cbace38410fe4058b059734a4633a45e37dac3e2bff6ead3fff3e5b4f8df0b2a8ff829157e8f26ece66d57f9c8c436ce344c6f1e7babb29441d2b5a2b8fa23e214df344ad4d784edc5afd914d9b3246eb8ad6b24c7c0b9504612209ec57f1a8c0e664e4882ddc483d06e767e455f602fc36f32e801c8239c04d77479f80f6853dfa8f9519212f602e48519f337c81b40f00d0ac75f60de2c4a5c2a9dc761ae2c8a5c772af03355874cf224173c0aef67a86bafdcc6f67fab963de2193d9086631f979c99518e9dae6a56700502fe2cb89826a682b0a777e708236d1d8cdc65b0b6ce2f9f98497b205281b5a01",
+		"responseA":      "0a01ab12c50104b2d1c88fdd46c0e496b8fb4cfafeb496de8ac102635b53c1febe2dbe2a479453cec31c3e66849b69ae55564a7db2e2d138e6d26c8def4013b4798d1b90c67dbedb49d3a5db41a3c6eccaad61c9d2095e7587434b8350262bccb0a4c0acc3a0ff1522217599fa1a5d2079e36a41a2501a342e27e99e1a2ebb17ff60e0d03c2db60946cba1abac1529a80f98e34a01d3b92c2a3c441f7d1d8f557c6345fe946fa3440ae108eb79a308243902f5a0e230b1cad6b88b7c00f3718b8ccaae3ff057b80f09932322411f1199da9e1fc3608905b94b8efddd973f14acff5f7670a5b889d4e84e26a7785e0529b0e063aeffb41c197631c3d3ef20f640f954efb0a319a105da4ac46a3301",
+		"responseB":      "0a01ab12c501048ceeee586f9542d0c92dd908e395647405fa19450ce6411146437ebe35cc46fbe703b23cd26ca65d8e7d79b95b88b4c6d69ec00c7ff896b19e12b7d4a5b4df6c17325e83ff42fdf49498d9566a5166f4c4488fb4435f0025d729781761a15d1084f5b41a0343257e6dc7ea03ac96674ff2ec4a0c8a13ee8c61ef50da702d4dc3a15ffb80394b8ee97fcbf2e1dbe6cb1657915c748e435ccc97c8c35f18e5dd8a0c66f4ee64a69628c9a7a033a7789955100c58462461be714c7370d15733e55696f020092241fdbd71f2de7810b97e4153d8b7063c666587f8ebfa949f4642bf1fa3f501d6104c2a3ae96390e8d31a839292d45fbcb6a7206050de1f082685f5c10f65492a9101",
 		"responseC":      "0a01cd122731206e657720707562732068617665206265656e206164646564207375636365737366756c6c7922419397ee168d931fde5f8f4f02241c2591b1b9ea63514b13c9dd153cf784f334a326d3707e938f714d47e29e1216514054621a56b8b5faf112acad7dc074b0dfee01",
-		"responseE":      "0a01ef12145bf98c8eede891f1ab36a40e745f37c803ec69bc1a97020a41041bcf290fa63d7279bddb8733f4684099bb21a33af2b34234c00bf249799aebcee0a195a509379f4815d6c5e3277ab73e6987c93fb22aca808b1f70d55ed4db5c12d101043b8837c5f5bd72a5476871b1421d5a68e802f5f92aff65d8d92fcaba83dbeb9eaa69360c3a954e824a00fa639430a073c5610e85b17230a010f4a4856f28cb3bb529a6182d596ab374e15381ed0bdaba6cfad6d352116df433dddb6d0919731e29bbe0d4b337981f47f179d2f996231de609ddca47d429bfb06931b8f8e4b2d1763abbb4e1c536f16a2410b21b0ef46b5a1d97d0ac6d087ef6571cd05c98c5058ebb8d793090de4d0fd8cc220c0104ffa5c22643ade8a692686d8b3aac49af3cd16b78aa11cccbdff4632d74a632b7cb1a97020a4104ab6d46ddeaf7e4e94adf8538c2a70644270314b11cec4d694961dea6c73d3495fce7d02b7bf4157e9a3724c8dffbd04e5d47ccac5cdc4607a9b866af2aae90e112d10104aee4f5c59a6759086b7ee9f96e620442f081c56e6c7da48485ddf870dffec3890a262073f7f68947b872c29c0afbde24a5a7327c10ebc656d96a325115f9684036f17aab00a13374b29faf998bc5ea9b403ed9e969b5005fc5d30c316a91bcc4fde8240fcce6f4556c8436b3ec813fa908697eda5df7e164ac8821a0d7cdf39e9b6bb8ea6bcf24ca884d4b4d686e8a3b64407fad34cd5d1f74edb1ac43dddccdb8807b018dee69f0db652fa7d3f5d2e860def6dd57f86b5bdf48ab674d9ce557a5ffb9a085742ce354fbade85b96bcb02241abbdb9701a3964193f071a18e4307fb3f3c2b46bd29c5fd2e4bf61f18d27db170ea277e08006ddf57c16b1255a26c7c81f592ceca140d3248c2c7bfe6ba4300401",
-		"responseReject": "0a010012125065726d697373696f6e2064656e696564212241ccc5c65d4ac7b7215acceb4cc6b7f63489dab27862e9aedd1763b4d071105bd517d487203792c68b7a7f16102a1af71018aefd93b5da2d86e9963717c0edb18f01",
+		"responseE":      "0a01ef12145bf98c8eede891f1ab36a40e745f37c803ec69bc1af7010a41041bcf290fa63d7279bddb8733f4684099bb21a33af2b34234c00bf249799aebcee0a195a509379f4815d6c5e3277ab73e6987c93fb22aca808b1f70d55ed4db5c12b101043279d3a1dd58573dc064e522bb906761b014c572c5668aad869eb4948b1562252dd4dc5055b2c5911b374745b05431e4f2e52ca4b3ee74d4d2a576ef6f5597a1be0c0ce84d4bbb87456287c028f70fc8fe803474f00c626eeef92dfaf3b3a90d08821eb994fa72ca8fe88a00e1c07f89cb7e62b093504bd0368676fd6b859e38eed2e1b79fce3b55d92626e7f937a0e6e4023f4ff08123d566d06d5c67688d939cd98339b7333b207ba141fe7b0a9bd51af7010a4104ab6d46ddeaf7e4e94adf8538c2a70644270314b11cec4d694961dea6c73d3495fce7d02b7bf4157e9a3724c8dffbd04e5d47ccac5cdc4607a9b866af2aae90e112b101048c12b7eb0941badf4ca187640db61865dd37c44f88409de03c3b710b49233ef0ea4fc99b2a5d232086da90109d962ab3d853ea97c38833cb9b93c31db19e46aa768661032576aa0aed9abea19e8c67c1c789ff1a1a8a9280c8882c3822805fbffe5c906ebcf561e28715fe290757fa6c01dcc35a19b5d0801b0cb5f89fecfc5969fffea7dd669777c01213e0b10d48177b809da7bbda5e6d94077e4177f37ee144aa92cf43a5b29490e94867c0c1503d22414b76d5045fdc19aa438dd76b9b05aabe8759d067f368342f1482817ea9b9f7ba67bcfa21098b13ec6c75e52bedf8ff363c01d7c390cc9d5ee15692970e65f51201",
+		"responseReject": "0a010012115065726d697373696f6e2064656e6965642241c85ba845d439f0fab769edbe777b3851eca20c7db871ed1d26549cd767d7a3de6c7dd883bc821fdb73a49cc912bacc8b33a4742723ec1002ec141dd7aff8685000",
 	}
 
 	noncepath = "./testdata/nonce"
@@ -36,22 +36,18 @@ func TestEnValueEncDec(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	salt0, err := crypto.GetSalt()
+	esalt, err := crypto.GetSalt()
 	if err != nil {
 		panic(err)
 	}
-	salt1, err := crypto.GetSalt()
+	ssalt, err := crypto.GetSalt()
 	if err != nil {
 		panic(err)
 	}
-	salt2, err := crypto.GetSalt()
-	if err != nil {
-		panic(err)
-	}
+
 	keys := &kdc.SubKey{
-		Subk0: crypto.KeyDerivFunc(msk, salt0),
-		Subk1: crypto.KeyDerivFunc(msk, salt1),
-		Subk2: crypto.KeyDerivFunc(msk, salt2),
+		EKey: crypto.KeyDerivFunc(msk, esalt, crypto.EKeyLen),
+		SKey: crypto.KeyDerivFunc(msk, ssalt, crypto.SKeyLen),
 	}
 
 	kv0 := &KeyValue{
@@ -106,10 +102,9 @@ func TestGetResponseA(t *testing.T) {
 	}
 
 	id := hex.EncodeToString(fileid)
-	key0 := hex.EncodeToString(keys.Subk0)
-	key1 := hex.EncodeToString(keys.Subk1)
-	key2 := hex.EncodeToString(keys.Subk2)
-	fmt.Printf("ans:%s\nfileid:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", string(ans), id, key0, key1, key2)
+	ekey := hex.EncodeToString(keys.EKey)
+	skey := hex.EncodeToString(keys.SKey)
+	fmt.Printf("ans:%s\nfileid:%s\nekey:%s\nskey:%s\n", string(ans), id, ekey, skey)
 }
 
 func TestGetResponseB(t *testing.T) {
@@ -129,10 +124,9 @@ func TestGetResponseB(t *testing.T) {
 		panic(err)
 	}
 
-	key0 := hex.EncodeToString(keys.Subk0)
-	key1 := hex.EncodeToString(keys.Subk1)
-	key2 := hex.EncodeToString(keys.Subk2)
-	fmt.Printf("ans:%s\nkey0:%s\nkey1:%s\nkey2:%s\n", string(ans), key0, key1, key2)
+	ekey := hex.EncodeToString(keys.EKey)
+	skey := hex.EncodeToString(keys.SKey)
+	fmt.Printf("ans:%s\nekey:%s\nskey:%s\n", string(ans), ekey, skey)
 }
 
 func TestGetResponseC(t *testing.T) {
@@ -176,9 +170,8 @@ func TestGetResponseE(t *testing.T) {
 	} else {
 		for _, key := range keys {
 			fmt.Println(hex.EncodeToString(key.Pub))
-			fmt.Println(hex.EncodeToString(key.SubKey.Subk0))
-			fmt.Println(hex.EncodeToString(key.SubKey.Subk1))
-			fmt.Println(hex.EncodeToString(key.SubKey.Subk2))
+			fmt.Println(hex.EncodeToString(key.SubKey.EKey))
+			fmt.Println(hex.EncodeToString(key.SubKey.SKey))
 		}
 	}
 }

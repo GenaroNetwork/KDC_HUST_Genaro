@@ -6,7 +6,6 @@ package crypto
 
 import (
 	"crypto/rand"
-	"crypto/sha1"
 	"crypto/sha256"
 	"golang.org/x/crypto/pbkdf2"
 	"io"
@@ -17,13 +16,11 @@ const (
 	Iter = 10000
 
 	// salt size
-	SaltLen = 8
+	SaltLen = 10
 
 	// mater key size
 	MskLen = 16
 
-	// sub key size
-	SubkLen = 32
 )
 
 // GetSalt returns a salt value
@@ -44,12 +41,7 @@ func KeyGen() ([]byte, error) {
 	return msk, nil
 }
 
-// KeyDerivFunc generates 256-bit sub-key according to master key and salt
-func KeyDerivFunc(msk, salt []byte) []byte {
-	return pbkdf2.Key(msk, salt, Iter, SubkLen, sha256.New)
-}
-
-// KeyDerive returns new key
-func KeyDerive(key, reference []byte, len int) []byte {
-	return pbkdf2.Key(key, reference, Iter, len, sha1.New)
+// KeyDerivFunc generates sub key according to master key and salt
+func KeyDerivFunc(msk, salt []byte, len int) []byte {
+	return pbkdf2.Key(msk, salt, Iter, len, sha256.New)
 }

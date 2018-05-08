@@ -44,17 +44,17 @@ func (user *GenaroUser) LoadAsyKey(ecdsapath, eciespath string) (err error) {
 
 // EncryptKeyValue encrypts key-value pair by symmetrical keys from kdc
 func EncryptKeyValue(keys *kdc.SubKey, kv *KeyValue) (ekv *EnKeyValue, err error) {
-	ekey, err := crypto.AESEncryptOFB(keys.Subk0, kv.Key)
+	ekey, err := crypto.AESEncryptOFB(keys.EKey, kv.Key)
 	if err != nil {
 		return nil, fmt.Errorf("EncryptKeyValue: failed to encrypt key with error: %s", err.Error())
 	}
 
-	evalue, err := crypto.AESEncryptOFB(keys.Subk0, kv.Value)
+	evalue, err := crypto.AESEncryptOFB(keys.EKey, kv.Value)
 	if err != nil {
 		return nil, fmt.Errorf("EncryptKeyValue: failed to encrypt value with error: %s", err.Error())
 	}
 
-	ssekey, err := crypto.SearchableEnc(kv.Key, keys.Subk1, keys.Subk2)
+	ssekey, err := crypto.SearchableEnc(kv.Key, keys.SKey)
 	if err != nil {
 		return nil, fmt.Errorf("EncryptKeyValue: failed to generate searchable ciphertext with error: %s", err.Error())
 	}
@@ -69,12 +69,12 @@ func EncryptKeyValue(keys *kdc.SubKey, kv *KeyValue) (ekv *EnKeyValue, err error
 
 // DecryptKeyValue decrypts ciphertext of key-value pair, and ignores the searchable ciphertext
 func DecryptKeyValue(keys *kdc.SubKey, ekv *EnKeyValue) (kv *KeyValue, err error) {
-	key, err := crypto.AESDecryptOFB(keys.Subk0, ekv.EKey)
+	key, err := crypto.AESDecryptOFB(keys.EKey, ekv.EKey)
 	if err != nil {
 		return nil, fmt.Errorf("DecryptKeyValue: failed to decrypt key with error: %s", err.Error())
 	}
 
-	value, err := crypto.AESDecryptOFB(keys.Subk0, ekv.EValue)
+	value, err := crypto.AESDecryptOFB(keys.EKey, ekv.EValue)
 	if err != nil {
 		return nil, fmt.Errorf("DecryptKeyValue: failed to decrypt value with error: %s", err.Error())
 	}
@@ -114,7 +114,7 @@ func (user *GenaroUser) GetResponseA(rep []byte, path string,
 		return nil, nil, nil, errors.New("GetResponseA: wrong response-buffer")
 	}
 
-	// Request was responded correctly. m = key0||key1||key2||fileid
+	// Request was responded correctly. m = EKey||SKey||fileid
 	m, err := crypto.EciesDecrypt(rp.Cora, user.Epri)
 	if err != nil {
 		return nil, nil, nil, errors.New("GetResponseA: something wrong with decryption")
@@ -126,17 +126,16 @@ func (user *GenaroUser) GetResponseA(rep []byte, path string,
 		return nil, nil, nil, fmt.Errorf("GetResponseA: failed to load nonce with error: %s", err.Error())
 	}
 
-	fileid = make([]byte, len(m[crypto.SubkLen*3:]))
-	copy(fileid, m[crypto.SubkLen*3:])
+	fileid = make([]byte, len(m[crypto.EKeyLen+crypto.SKeyLen:]))
+	copy(fileid, m[crypto.EKeyLen+crypto.SKeyLen:])
 	loadid := crypto.SHA1(sn)
 	if !bytes.Equal(fileid, loadid[:]) {
 		return nil, nil, nil, errors.New("GetResponseA: not wanted fileid")
 	}
 
 	keys = &kdc.SubKey{
-		Subk0: m[:crypto.SubkLen],
-		Subk1: m[crypto.SubkLen : crypto.SubkLen*2],
-		Subk2: m[crypto.SubkLen*2 : crypto.SubkLen*3],
+		EKey: m[:crypto.EKeyLen],
+		SKey: m[crypto.EKeyLen:crypto.EKeyLen+crypto.SKeyLen],
 	}
 	return
 }
@@ -168,22 +167,21 @@ func (user *GenaroUser) GetResponseB(rep, fileid []byte, pub *ecdsa.PublicKey,
 		return nil, nil, errors.New("GetResponseB: wrong response-buffer")
 	}
 
-	// Request was responded correctly. m = key0||key1||key2||fileid
+	// Request was responded correctly. m = EKey||SKey||fileid
 	m, err := crypto.EciesDecrypt(rp.Cora, user.Epri)
 	if err != nil {
 		return nil, nil, errors.New("GetResponseB: something wrong with decryption")
 	}
 
-	fid := make([]byte, len(m[crypto.SubkLen*3:]))
-	copy(fid, m[crypto.SubkLen*3:])
+	fid := make([]byte, len(m[crypto.EKeyLen+crypto.SKeyLen:]))
+	copy(fid, m[crypto.EKeyLen+crypto.SKeyLen:])
 	if !bytes.Equal(fileid, fid) {
 		return nil, nil, errors.New("GetResponseB: not wanted fileid")
 	}
 
 	keys = &kdc.SubKey{
-		Subk0: m[:crypto.SubkLen],
-		Subk1: m[crypto.SubkLen : crypto.SubkLen*2],
-		Subk2: m[crypto.SubkLen*2 : crypto.SubkLen*3],
+		EKey: m[:crypto.EKeyLen],
+		SKey: m[crypto.EKeyLen:crypto.EKeyLen+crypto.SKeyLen],
 	}
 	return
 }
@@ -261,9 +259,8 @@ func (user *GenaroUser) GetResponseE(rep, fileid []byte, pub *ecdsa.PublicKey,
 		ele := &kdc.KeyOwner{
 			Pub: ko.Pub,
 			SubKey: kdc.SubKey{
-				Subk0: m[:crypto.SubkLen],
-				Subk1: m[crypto.SubkLen : crypto.SubkLen*2],
-				Subk2: m[crypto.SubkLen*2:],
+				EKey: m[:crypto.EKeyLen],
+				SKey: m[crypto.EKeyLen:crypto.EKeyLen+crypto.SKeyLen],
 			},
 		}
 		keys = append(keys, ele)

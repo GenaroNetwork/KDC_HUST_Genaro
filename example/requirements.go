@@ -27,14 +27,12 @@ func EncContract(fileid []byte, keys KeyWithPub, kvs map[string]string) (num int
 	file := hex.EncodeToString(fileid)
 	ec := session.DB(EkvDB).C(file)
 
-	key0, _ := hex.DecodeString(keys.Key0)
-	key1, _ := hex.DecodeString(keys.Key1)
-	key2, _ := hex.DecodeString(keys.Key2)
+	ekey, _ := hex.DecodeString(keys.EKey)
+	skey, _ := hex.DecodeString(keys.SKey)
 
 	bkey := &kdc.SubKey{
-		Subk0: key0,
-		Subk1: key1,
-		Subk2: key2,
+		EKey: ekey,
+		SKey: skey,
 	}
 
 	for key, value := range kvs {
@@ -91,9 +89,9 @@ func DecWithPrint(fileid []byte, keys []KeyWithPub) (num int, err error) {
 				EValue: ev,
 			}
 
-			key0, _ := hex.DecodeString(key.Key0)
+			ekey, _ := hex.DecodeString(key.EKey)
 			dek := &kdc.SubKey{
-				Subk0: key0,
+				EKey: ekey,
 			}
 
 			kv, err := client.DecryptKeyValue(dek, ekv)
@@ -158,7 +156,7 @@ func DecEValues(keys []KeyWithPub, evs []EValues) (vs [][]byte, num int, err err
 
 	for _, key := range keys {
 		pub, _ := hex.DecodeString(key.Pub)
-		k0, _ := hex.DecodeString(key.Key0)
+		k0, _ := hex.DecodeString(key.EKey)
 
 		for _, ev := range evs {
 			if bytes.Equal(pub, ev.Pub) {

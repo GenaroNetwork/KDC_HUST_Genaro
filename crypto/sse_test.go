@@ -35,7 +35,7 @@ func TestAESECB(t *testing.T) {
 	}
 
 	salt, err := GetSalt()
-	key := KeyDerivFunc(msk, salt)
+	key := KeyDerivFunc(msk, salt, EKeyLen)
 
 	plaintext := []byte("GenaroNetwork")
 	plain := SPadding(plaintext)
@@ -62,18 +62,16 @@ func TestSearchEncryption(t *testing.T) {
 		panic(err)
 	}
 
-	salt1, err := GetSalt()
-	salt2, err := GetSalt()
-	key1 := KeyDerivFunc(msk, salt1)
-	key2 := KeyDerivFunc(msk, salt2)
+	salt, err := GetSalt()
+	skey := KeyDerivFunc(msk, salt, SKeyLen)
 
 	keyword := []byte("GenaroNetwork")
-	scipher, err := SearchableEnc(keyword, key1, key2)
+	scipher, err := SearchableEnc(keyword, skey)
 	if err != nil {
 		panic(err)
 	}
 
-	token, err := Trapdoor(keyword, key1, key2)
+	token, err := Trapdoor(keyword, skey)
 	if err != nil {
 		panic(err)
 	}

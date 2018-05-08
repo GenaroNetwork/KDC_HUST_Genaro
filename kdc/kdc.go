@@ -62,12 +62,12 @@ type Msk struct {
 }
 
 type Salt struct {
-	Pub                 string
-	Salt0, Salt1, Salt2 string
+	Pub          string
+	ESalt, SSalt string
 }
 
 type SubKey struct {
-	Subk0, Subk1, Subk2 []byte
+	EKey, SKey []byte
 }
 
 type WhiteList struct {
@@ -150,11 +150,10 @@ func ReturnAllKeys(msd *mgo.Database, sud *mgo.Database,
 	}
 
 	for _, salt := range salts {
-		salt0, salt1, salt2 := salt.toBytes()
+		esalt, ssalt := salt.toBytes()
 		subk := SubKey{
-			Subk0: crypto.KeyDerivFunc(msk, salt0),
-			Subk1: crypto.KeyDerivFunc(msk, salt1),
-			Subk2: crypto.KeyDerivFunc(msk, salt2),
+			EKey: crypto.KeyDerivFunc(msk, esalt, crypto.EKeyLen),
+			SKey: crypto.KeyDerivFunc(msk, ssalt, crypto.SKeyLen),
 		}
 
 		ow, _ := hex.DecodeString(salt.Pub)
@@ -226,18 +225,16 @@ func GetSalts(d *mgo.Database, fileid, pub []byte) (sa *Salt, err error) {
 	return
 }
 
-func (sa *Salt) toBytes() (salt0, salt1, salt2 []byte) {
-	salt0, _ = hex.DecodeString(sa.Salt0)
-	salt1, _ = hex.DecodeString(sa.Salt1)
-	salt2, _ = hex.DecodeString(sa.Salt2)
+func (sa *Salt) toBytes() (esalt, ssalt []byte) {
+	esalt, _ = hex.DecodeString(sa.ESalt)
+	ssalt, _ = hex.DecodeString(sa.SSalt)
 	return
 }
 
-func (sa *Salt) fromBytes(pub, salt0, salt1, salt2 []byte) {
+func (sa *Salt) fromBytes(pub, esalt, ssalt []byte) {
 	sa.Pub = hex.EncodeToString(pub)
-	sa.Salt0 = hex.EncodeToString(salt0)
-	sa.Salt1 = hex.EncodeToString(salt1)
-	sa.Salt2 = hex.EncodeToString(salt2)
+	sa.ESalt = hex.EncodeToString(esalt)
+	sa.SSalt = hex.EncodeToString(ssalt)
 }
 
 // GenSubKey generates sub keys of the file for the public key
@@ -248,29 +245,24 @@ func GenSubKey(d *mgo.Database, msk, fileid, pub []byte) (subk *SubKey, err erro
 	sa := new(Salt)
 	sa, err = GetSalts(d, fileid, pub)
 	if sa != nil {
-		salt0, salt1, salt2 := sa.toBytes()
-		subk.Subk0 = crypto.KeyDerivFunc(msk, salt0)
-		subk.Subk1 = crypto.KeyDerivFunc(msk, salt1)
-		subk.Subk2 = crypto.KeyDerivFunc(msk, salt2)
+		esalt, ssalt := sa.toBytes()
+		subk.EKey = crypto.KeyDerivFunc(msk, esalt, crypto.EKeyLen)
+		subk.SKey = crypto.KeyDerivFunc(msk, ssalt, crypto.SKeyLen)
 		return
 	}
 
 	// generate salts
-	salt0, err := crypto.GetSalt()
+	esalt, err := crypto.GetSalt()
 	if err != nil {
-		return nil, errors.New("GenSubKey: failed to get salt0")
+		return nil, errors.New("GenSubKey: failed to get esalt")
 	}
-	salt1, err := crypto.GetSalt()
+	ssalt, err := crypto.GetSalt()
 	if err != nil {
-		return nil, errors.New("GenSubKey: failed to get salt1")
-	}
-	salt2, err := crypto.GetSalt()
-	if err != nil {
-		return nil, errors.New("GenSubKey: failed to get salt2")
+		return nil, errors.New("GenSubKey: failed to get ssalt")
 	}
 
 	nsa := new(Salt)
-	nsa.fromBytes(pub, salt0, salt1, salt2)
+	nsa.fromBytes(pub, esalt, ssalt)
 
 	file := hex.EncodeToString(fileid)
 
@@ -282,9 +274,8 @@ func GenSubKey(d *mgo.Database, msk, fileid, pub []byte) (subk *SubKey, err erro
 	}
 
 	// generate sub keys
-	subk.Subk0 = crypto.KeyDerivFunc(msk, salt0)
-	subk.Subk1 = crypto.KeyDerivFunc(msk, salt1)
-	subk.Subk2 = crypto.KeyDerivFunc(msk, salt2)
+	subk.EKey = crypto.KeyDerivFunc(msk, esalt, crypto.EKeyLen)
+	subk.SKey = crypto.KeyDerivFunc(msk, ssalt, crypto.SKeyLen)
 	return
 }
 
