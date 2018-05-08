@@ -30,7 +30,7 @@ func TestUserInitLoadPublicKey(t *testing.T) {
 	}
 }
 
-func TestEVEncDEC(t *testing.T) {
+func TestEnValueEncDec(t *testing.T) {
 	// generate keys
 	msk, err := crypto.KeyGen()
 	if err != nil {
