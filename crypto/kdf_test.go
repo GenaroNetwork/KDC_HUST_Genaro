@@ -8,16 +8,10 @@ import (
 
 // Test KDF functions
 func TestKDF(t *testing.T) {
-	salt, err := SaltGen()
-	if err != nil {
-		panic(err)
-	}
+	salt := SaltGen()
 	fmt.Println(len(salt), salt)
 
-	msk, err := KeyGen()
-	if err != nil {
-		panic(err)
-	}
+	msk := KeyGen()
 	fmt.Println(len(msk), msk)
 
 	sk := KeyDerivFunc(msk, salt, 32)
@@ -27,56 +21,36 @@ func TestKDF(t *testing.T) {
 // Benchmark the generation of salt
 func BenchmarkGetSalt(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		if _, err := SaltGen(); err != nil {
-			panic(err)
-			b.FailNow()
-		}
+		SaltGen()
 	}
 }
 
 // Benchmark the generation of master key
 func BenchmarkKeyGen(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		if _, err := KeyGen(); err != nil {
-			panic(err)
-			b.FailNow()
-		}
+		KeyGen()
 	}
 }
 
 // Benchmark the generation of sub key
 func BenchmarkKeyDerivFunc(b *testing.B) {
-	salt, err := SaltGen()
-	if err != nil {
-		fmt.Println(err.Error())
-		b.FailNow()
-	}
+	salt := SaltGen()
 
-	msk, err := KeyGen()
-	if err != nil {
-		panic(err)
-		b.FailNow()
-	}
+	msk := KeyGen()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = KeyDerivFunc(msk, salt,32)
+		_ = KeyDerivFunc(msk, salt, 32)
 	}
 }
 
 func TestKeyDerivFunce(t *testing.T) {
-	salt, err := SaltGen()
-	if err != nil {
-		panic(err)
-	}
+	salt := SaltGen()
 
-	msk, err := KeyGen()
-	if err != nil {
-		panic(err)
-	}
+	msk := KeyGen()
 
 	for i := 0; i < 5; i++ {
-		sub := KeyDerivFunc(msk, salt,32)
+		sub := KeyDerivFunc(msk, salt, 32)
 		fmt.Println(hex.EncodeToString(sub))
 	}
 }

@@ -46,18 +46,10 @@ func TestSHA3_512(t *testing.T) {
 }
 
 func TestEncryptDecrypt(t *testing.T) {
-	msk, err := KeyGen()
-	if err != nil {
-		panic(err)
-	}
+	msk := KeyGen()
 
-<<<<<<< HEAD
-	salt, err := GetSalt()
+	salt := SaltGen()
 	key := KeyDerivFunc(msk, salt, EKeyLen)
-=======
-	salt, err := SaltGen()
-	key := KeyDerivFunc(msk, salt)
->>>>>>> e29cd518bcd86594ff6ebfd6004c41bac20b0cdd
 
 	msg := []byte("Genaro Network")
 	fmt.Println(len(msg))
