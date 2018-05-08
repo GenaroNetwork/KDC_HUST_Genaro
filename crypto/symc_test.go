@@ -51,8 +51,13 @@ func TestEncryptDecrypt(t *testing.T) {
 		panic(err)
 	}
 
+<<<<<<< HEAD
 	salt, err := GetSalt()
 	key := KeyDerivFunc(msk, salt, EKeyLen)
+=======
+	salt, err := SaltGen()
+	key := KeyDerivFunc(msk, salt)
+>>>>>>> e29cd518bcd86594ff6ebfd6004c41bac20b0cdd
 
 	msg := []byte("Genaro Network")
 	fmt.Println(len(msg))

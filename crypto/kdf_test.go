@@ -8,7 +8,7 @@ import (
 
 // Test KDF functions
 func TestKDF(t *testing.T) {
-	salt, err := GetSalt()
+	salt, err := SaltGen()
 	if err != nil {
 		panic(err)
 	}
@@ -27,7 +27,7 @@ func TestKDF(t *testing.T) {
 // Benchmark the generation of salt
 func BenchmarkGetSalt(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		if _, err := GetSalt(); err != nil {
+		if _, err := SaltGen(); err != nil {
 			panic(err)
 			b.FailNow()
 		}
@@ -46,7 +46,7 @@ func BenchmarkKeyGen(b *testing.B) {
 
 // Benchmark the generation of sub key
 func BenchmarkKeyDerivFunc(b *testing.B) {
-	salt, err := GetSalt()
+	salt, err := SaltGen()
 	if err != nil {
 		fmt.Println(err.Error())
 		b.FailNow()
@@ -65,7 +65,7 @@ func BenchmarkKeyDerivFunc(b *testing.B) {
 }
 
 func TestKeyDerivFunce(t *testing.T) {
-	salt, err := GetSalt()
+	salt, err := SaltGen()
 	if err != nil {
 		panic(err)
 	}

@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"genaro-crypto/crypto"
 	"genaro-crypto/protobuf"
+
 	"github.com/ethereum/go-ethereum/crypto/ecies"
 	"github.com/golang/protobuf/proto"
 	"gopkg.in/mgo.v2"

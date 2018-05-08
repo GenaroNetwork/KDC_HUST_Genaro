@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"genaro-crypto/crypto"
+
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -252,13 +253,27 @@ func GenSubKey(d *mgo.Database, msk, fileid, pub []byte) (subk *SubKey, err erro
 	}
 
 	// generate salts
+<<<<<<< HEAD
 	esalt, err := crypto.GetSalt()
+=======
+	salt0, err := crypto.SaltGen()
+>>>>>>> e29cd518bcd86594ff6ebfd6004c41bac20b0cdd
 	if err != nil {
 		return nil, errors.New("GenSubKey: failed to get esalt")
 	}
+<<<<<<< HEAD
 	ssalt, err := crypto.GetSalt()
 	if err != nil {
 		return nil, errors.New("GenSubKey: failed to get ssalt")
+=======
+	salt1, err := crypto.SaltGen()
+	if err != nil {
+		return nil, errors.New("GenSubKey: failed to get salt1")
+	}
+	salt2, err := crypto.SaltGen()
+	if err != nil {
+		return nil, errors.New("GenSubKey: failed to get salt2")
+>>>>>>> e29cd518bcd86594ff6ebfd6004c41bac20b0cdd
 	}
 
 	nsa := new(Salt)

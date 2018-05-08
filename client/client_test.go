@@ -36,11 +36,23 @@ func TestEnValueEncDec(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+<<<<<<< HEAD
 	esalt, err := crypto.GetSalt()
 	if err != nil {
 		panic(err)
 	}
 	ssalt, err := crypto.GetSalt()
+=======
+	salt0, err := crypto.SaltGen()
+	if err != nil {
+		panic(err)
+	}
+	salt1, err := crypto.SaltGen()
+	if err != nil {
+		panic(err)
+	}
+	salt2, err := crypto.SaltGen()
+>>>>>>> e29cd518bcd86594ff6ebfd6004c41bac20b0cdd
 	if err != nil {
 		panic(err)
 	}

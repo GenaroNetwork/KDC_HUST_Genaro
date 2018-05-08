@@ -23,11 +23,12 @@ const (
 
 )
 
-// GetSalt returns a salt value
-func GetSalt() ([]byte, error) {
+// SaltGen returns a salt value
+func SaltGen() ([]byte, error) {
 	salt := make([]byte, SaltLen)
-	if _, err := io.ReadFull(rand.Reader, salt); err != nil {
-		return nil, err
+	_, err := io.ReadFull(rand.Reader, salt)
+	if err != nil {
+		panic(err)
 	}
 	return salt, nil
 }
@@ -35,8 +36,9 @@ func GetSalt() ([]byte, error) {
 // KeyGen returns a master key
 func KeyGen() ([]byte, error) {
 	msk := make([]byte, MskLen)
-	if _, err := io.ReadFull(rand.Reader, msk); err != nil {
-		return nil, err
+	_, err := io.ReadFull(rand.Reader, msk)
+	if err != nil {
+		panic(err)
 	}
 	return msk, nil
 }

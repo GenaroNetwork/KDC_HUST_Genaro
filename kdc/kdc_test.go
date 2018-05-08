@@ -3,8 +3,9 @@ package kdc
 import (
 	"encoding/hex"
 	"fmt"
-	"gopkg.in/mgo.v2"
 	"testing"
+
+	"gopkg.in/mgo.v2"
 )
 
 var (

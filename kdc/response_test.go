@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"genaro-crypto/crypto"
 	"genaro-crypto/protobuf"
+	"testing"
+
 	"github.com/golang/protobuf/proto"
 	"gopkg.in/mgo.v2"
-	"testing"
 )
 
 var (
