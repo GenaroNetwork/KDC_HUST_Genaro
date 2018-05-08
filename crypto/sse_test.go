@@ -34,7 +34,7 @@ func TestAESECB(t *testing.T) {
 		panic(err)
 	}
 
-	salt, err := GetSalt()
+	salt, err := SaltGen()
 	key := KeyDerivFunc(msk, salt)
 
 	plaintext := []byte("GenaroNetwork")
@@ -62,8 +62,8 @@ func TestSearchEncryption(t *testing.T) {
 		panic(err)
 	}
 
-	salt1, err := GetSalt()
-	salt2, err := GetSalt()
+	salt1, err := SaltGen()
+	salt2, err := SaltGen()
 	key1 := KeyDerivFunc(msk, salt1)
 	key2 := KeyDerivFunc(msk, salt2)
 

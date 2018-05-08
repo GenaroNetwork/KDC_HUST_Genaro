@@ -257,15 +257,15 @@ func GenSubKey(d *mgo.Database, msk, fileid, pub []byte) (subk *SubKey, err erro
 	}
 
 	// generate salts
-	salt0, err := crypto.GetSalt()
+	salt0, err := crypto.SaltGen()
 	if err != nil {
 		return nil, errors.New("GenSubKey: failed to get salt0")
 	}
-	salt1, err := crypto.GetSalt()
+	salt1, err := crypto.SaltGen()
 	if err != nil {
 		return nil, errors.New("GenSubKey: failed to get salt1")
 	}
-	salt2, err := crypto.GetSalt()
+	salt2, err := crypto.SaltGen()
 	if err != nil {
 		return nil, errors.New("GenSubKey: failed to get salt2")
 	}
