@@ -14,8 +14,7 @@ import (
 	"io"
 )
 
-var
-(
+var (
 	// The length of symmetric encryption key
 	EKeyLen = 32
 )

@@ -20,7 +20,6 @@ const (
 
 	// mater key size
 	MskLen = 16
-
 )
 
 func randomBytes(size uint32) []byte {

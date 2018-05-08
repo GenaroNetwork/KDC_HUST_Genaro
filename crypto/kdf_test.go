@@ -40,7 +40,7 @@ func BenchmarkKeyDerivFunc(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = KeyDerivFunc(msk, salt,32)
+		_ = KeyDerivFunc(msk, salt, 32)
 	}
 }
 
@@ -50,7 +50,7 @@ func TestKeyDerivFunce(t *testing.T) {
 	msk := KeyGen()
 
 	for i := 0; i < 5; i++ {
-		sub := KeyDerivFunc(msk, salt,32)
+		sub := KeyDerivFunc(msk, salt, 32)
 		fmt.Println(hex.EncodeToString(sub))
 	}
 }

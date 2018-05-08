@@ -135,7 +135,7 @@ func (user *GenaroUser) GetResponseA(rep []byte, path string,
 
 	keys = &kdc.SubKey{
 		EKey: m[:crypto.EKeyLen],
-		SKey: m[crypto.EKeyLen:crypto.EKeyLen+crypto.SKeyLen],
+		SKey: m[crypto.EKeyLen : crypto.EKeyLen+crypto.SKeyLen],
 	}
 	return
 }
@@ -181,7 +181,7 @@ func (user *GenaroUser) GetResponseB(rep, fileid []byte, pub *ecdsa.PublicKey,
 
 	keys = &kdc.SubKey{
 		EKey: m[:crypto.EKeyLen],
-		SKey: m[crypto.EKeyLen:crypto.EKeyLen+crypto.SKeyLen],
+		SKey: m[crypto.EKeyLen : crypto.EKeyLen+crypto.SKeyLen],
 	}
 	return
 }
@@ -260,7 +260,7 @@ func (user *GenaroUser) GetResponseE(rep, fileid []byte, pub *ecdsa.PublicKey,
 			Pub: ko.Pub,
 			SubKey: kdc.SubKey{
 				EKey: m[:crypto.EKeyLen],
-				SKey: m[crypto.EKeyLen:crypto.EKeyLen+crypto.SKeyLen],
+				SKey: m[crypto.EKeyLen : crypto.EKeyLen+crypto.SKeyLen],
 			},
 		}
 		keys = append(keys, ele)

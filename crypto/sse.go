@@ -110,8 +110,8 @@ func GetRandom(len int) ([]byte, error) {
 // SearchableEnc generates a searchable ciphertext for the keyword
 func SearchableEnc(keyword, skey []byte) (scipher []byte, err error) {
 	word := SPadding(keyword)
-    key1 := skey[:SKeyLen/2]
-    key2 := skey[SKeyLen/2:]
+	key1 := skey[:SKeyLen/2]
+	key2 := skey[SKeyLen/2:]
 
 	// generate deterministic ciphertext
 	dc, err := AESEncryptECB(key1, word)
