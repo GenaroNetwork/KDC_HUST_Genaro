@@ -13,25 +13,25 @@ import (
 
 const (
 	// The length of searchable ciphertext
-	SSize = 64
+	sSize = 64
 
 	// The length of searchable encryption key
 	SKeyLen = 32
 
 	// The length of the right part of search token
-	Rtoken = 16
+	rTokenLen = 16
 )
 
 // sPadding pads the keyword as long as a searchable ciphertext
 // The padded keyword cannot be restored
 func sPadding(keyword []byte) []byte {
-	if len(keyword) == SSize {
+	if len(keyword) == sSize {
 		return keyword
 	} else {
-		// if SSize != 64, the hash function needs to be changed
+		// if sSize != 64, the hash function needs to be changed
 		return SHA3_512(keyword)
 	}
-	//paddingCount := SSize - len(keyword)
+	//paddingCount := sSize - len(keyword)
 	//return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
 }
 
@@ -108,20 +108,20 @@ func SearchableEnc(keyword, skey []byte) (scipher []byte, err error) {
 	}
 
 	// generate key3
-	key3 := KeyDerivFunc(key2, dc, Rtoken)
+	key3 := KeyDerivFunc(key2, dc, rTokenLen)
 
 	// generate random stream
-	rlen := SSize - HMACSize
+	rlen := sSize - HMACSize
 	left := randomBytes(uint32(rlen))
 
 	// generate stream ciphertext
 	right := HMAC(left, key3)
-	sc := make([]byte, SSize)
+	sc := make([]byte, sSize)
 	copy(sc, left)
 	copy(sc[rlen:], right)
 
 	// generate searchable ciphertext
-	scipher = make([]byte, SSize)
+	scipher = make([]byte, sSize)
 	xorBytes(scipher, dc, sc)
 	return scipher, nil
 }
@@ -133,31 +133,31 @@ func Trapdoor(keyword, skey []byte) (token []byte, err error) {
 	key2 := skey[SKeyLen/2:]
 
 	// generate left token
-	ltoken := make([]byte, SSize)
+	ltoken := make([]byte, sSize)
 	ltoken, err = aesEncryptECB(key1, word)
 	if err != nil {
 		return nil, fmt.Errorf("Trapdoor: failed to encrypt keyword with error: %s", err.Error())
 	}
 
 	// generate right token
-	rtoken := KeyDerivFunc(key2, ltoken, Rtoken)
+	rtoken := KeyDerivFunc(key2, ltoken, rTokenLen)
 
 	// generate token
-	token = make([]byte, SSize+Rtoken)
+	token = make([]byte, sSize+rTokenLen)
 	copy(token, ltoken)
-	copy(token[SSize:], rtoken)
+	copy(token[sSize:], rtoken)
 	return token, nil
 }
 
 //  Exported Matching judges whether the token and the cipher contain same keyword
 func Matching(token, scipher []byte) bool {
-	if len(scipher) != SSize {
+	if len(scipher) != sSize {
 		return false
 	}
 
-	sc := make([]byte, SSize)
-	xorBytes(sc, scipher, token[:SSize])
+	sc := make([]byte, sSize)
+	xorBytes(sc, scipher, token[:sSize])
 
-	rlen := SSize - HMACSize
-	return bytes.Equal(sc[rlen:], HMAC(sc[:rlen], token[SSize:]))
+	rlen := sSize - HMACSize
+	return bytes.Equal(sc[rlen:], HMAC(sc[:rlen], token[sSize:]))
 }
