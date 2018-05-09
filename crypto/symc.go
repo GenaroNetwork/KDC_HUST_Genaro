@@ -54,7 +54,7 @@ func getIV(blockSize int) ([]byte, error) {
 	return iv, nil
 }
 
-// AESEncryptCFB generates an AES ciphertext using OFB pattern
+// AESEncryptOFB generates an AES ciphertext using OFB pattern
 func AESEncryptOFB(key, plaintext []byte) (ciphertext []byte, err error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
