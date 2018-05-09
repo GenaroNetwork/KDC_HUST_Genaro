@@ -7,10 +7,8 @@ package crypto
 import (
 	"bytes"
 	"crypto/aes"
-	"crypto/rand"
 	"errors"
 	"fmt"
-	"io"
 )
 
 const (
@@ -24,9 +22,9 @@ const (
 	Rtoken = 16
 )
 
-// SPadding pads the keyword as long as a searchable ciphertext
+// sPadding pads the keyword as long as a searchable ciphertext
 // The padded keyword cannot be restored
-func SPadding(keyword []byte) []byte {
+func sPadding(keyword []byte) []byte {
 	if len(keyword) == SSize {
 		return keyword
 	}
@@ -38,8 +36,8 @@ func SPadding(keyword []byte) []byte {
 	return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
 }
 
-// XORBytes computes the XOR of two byte slices
-func XORBytes(dst, a, b []byte) int {
+// xorBytes computes the XOR of two byte slices
+func xorBytes(dst, a, b []byte) int {
 	n := len(a)
 	if len(b) < n {
 		n = len(b)
@@ -50,10 +48,10 @@ func XORBytes(dst, a, b []byte) int {
 	return n
 }
 
-// AESEncryptECB is a deterministic encryption algorithm used in SSE sechme
-func AESEncryptECB(key, plaintext []byte) (cipher []byte, err error) {
+// aesEncryptECB is a deterministic encryption algorithm used in SSE sechme
+func aesEncryptECB(key, plaintext []byte) (cipher []byte, err error) {
 	if len(plaintext)%aes.BlockSize != 0 {
-		return nil, errors.New("AESEncryptECB: plaintext size error")
+		return nil, errors.New("aesEncryptECB: plaintext size error")
 
 	}
 
@@ -74,10 +72,10 @@ func AESEncryptECB(key, plaintext []byte) (cipher []byte, err error) {
 
 }
 
-// AESDecryptECB returns the plaintext of the input cipher
-func AESDecryptECB(key, cipher []byte) (plaintext []byte, err error) {
+// aesDecryptECB returns the plaintext of the input cipher
+func aesDecryptECB(key, cipher []byte) (plaintext []byte, err error) {
 	if len(cipher)%aes.BlockSize != 0 {
-		return nil, errors.New("AESDecryptECB: cipher size error")
+		return nil, errors.New("aesDecryptECB: cipher size error")
 
 	}
 
@@ -98,23 +96,14 @@ func AESDecryptECB(key, cipher []byte) (plaintext []byte, err error) {
 
 }
 
-// GetRandom returns a random stream
-func GetRandom(len int) ([]byte, error) {
-	random := make([]byte, len)
-	if _, err := io.ReadFull(rand.Reader, random); err != nil {
-		return nil, err
-	}
-	return random, nil
-}
-
-// SearchableEnc generates a searchable ciphertext for the keyword
+// Export SearchableEnc generates a searchable ciphertext for the keyword
 func SearchableEnc(keyword, skey []byte) (scipher []byte, err error) {
-	word := SPadding(keyword)
+	word := sPadding(keyword)
 	key1 := skey[:SKeyLen/2]
 	key2 := skey[SKeyLen/2:]
 
 	// generate deterministic ciphertext
-	dc, err := AESEncryptECB(key1, word)
+	dc, err := aesEncryptECB(key1, word)
 	if err != nil {
 		return nil, fmt.Errorf("SearchableEnc: failed to encrypt keyword with error: %s", err.Error())
 	}
@@ -124,10 +113,7 @@ func SearchableEnc(keyword, skey []byte) (scipher []byte, err error) {
 
 	// generate random stream
 	rlen := SSize - HMACSize
-	left, err := GetRandom(rlen)
-	if err != nil {
-		return nil, err
-	}
+	left := randomBytes(uint32(rlen))
 
 	// generate stream ciphertext
 	right := HMAC(left, key3)
@@ -137,19 +123,19 @@ func SearchableEnc(keyword, skey []byte) (scipher []byte, err error) {
 
 	// generate searchable ciphertext
 	scipher = make([]byte, SSize)
-	XORBytes(scipher, dc, sc)
+	xorBytes(scipher, dc, sc)
 	return scipher, nil
 }
 
-// Trapdoor generates a keyword search token
+// exported Trapdoor generates a keyword search token
 func Trapdoor(keyword, skey []byte) (token []byte, err error) {
-	word := SPadding(keyword)
+	word := sPadding(keyword)
 	key1 := skey[:SKeyLen/2]
 	key2 := skey[SKeyLen/2:]
 
 	// generate left token
 	ltoken := make([]byte, SSize)
-	ltoken, err = AESEncryptECB(key1, word)
+	ltoken, err = aesEncryptECB(key1, word)
 	if err != nil {
 		return nil, fmt.Errorf("Trapdoor: failed to encrypt keyword with error: %s", err.Error())
 	}
@@ -164,14 +150,14 @@ func Trapdoor(keyword, skey []byte) (token []byte, err error) {
 	return token, nil
 }
 
-//  Matching judges whether the token and the cipher contain same keyword
+//  Exported Matching judges whether the token and the cipher contain same keyword
 func Matching(token, scipher []byte) bool {
 	if len(scipher) != SSize {
 		return false
 	}
 
 	sc := make([]byte, SSize)
-	XORBytes(sc, scipher, token[:SSize])
+	xorBytes(sc, scipher, token[:SSize])
 
 	rlen := SSize - HMACSize
 	return bytes.Equal(sc[rlen:], HMAC(sc[:rlen], token[SSize:]))

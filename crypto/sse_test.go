@@ -9,12 +9,12 @@ import (
 // Test padding
 func TestPadding(t *testing.T) {
 	keyword := []byte{0x11}
-	result := SPadding(keyword)
+	result := sPadding(keyword)
 	fmt.Println(keyword, len(result), result)
 
 	k1 := SHA3_512(keyword)
 	fmt.Println(k1)
-	r1 := SPadding(k1)
+	r1 := sPadding(k1)
 	fmt.Println(len(r1), r1)
 
 	k2 := []byte("Genaro Network is the first Turing Complete Public Chain with Decentralized Storage Network, " +
@@ -22,7 +22,7 @@ func TestPadding(t *testing.T) {
 		"Meanwhile, Genaro provides everyone with a trustworthy internet and a sharing community. As the creator behind the " +
 		"blockchain 3.0 concept, Genaro aims to contribute to blockchain infrastructure technology development. Through the Genaro Hub " +
 		"and Accelerator, we aim to foster thousands of DAPPS, to move applications from Cloud to Blockchain and thereby create a global blockchain ecosystem")
-	r2 := SPadding(k2)
+	r2 := sPadding(k2)
 	fmt.Println(SHA3_512(k2))
 	fmt.Println(len(r2), r2)
 }
@@ -35,14 +35,14 @@ func TestAESECB(t *testing.T) {
 	key := KeyDerivFunc(msk, salt, EKeyLen)
 
 	plaintext := []byte("GenaroNetwork")
-	plain := SPadding(plaintext)
+	plain := sPadding(plaintext)
 
-	cipher, err := AESEncryptECB(key, plain)
+	cipher, err := aesEncryptECB(key, plain)
 	if err != nil {
 		panic(err)
 	}
 
-	p, err := AESDecryptECB(key, cipher)
+	p, err := aesDecryptECB(key, cipher)
 	if err != nil {
 		panic(err)
 	}
