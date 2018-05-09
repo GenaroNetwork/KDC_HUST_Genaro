@@ -29,13 +29,12 @@ const (
 func SPadding(keyword []byte) []byte {
 	if len(keyword) == SSize {
 		return keyword
-	}
-	// if SSize != 64, the hash function needs to be changed
-	if len(keyword) > SSize {
+	} else {
+		// if SSize != 64, the hash function needs to be changed
 		return SHA3_512(keyword)
 	}
-	paddingCount := SSize - len(keyword)
-	return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
+	//paddingCount := SSize - len(keyword)
+	//return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
 }
 
 // XORBytes computes the XOR of two byte slices
