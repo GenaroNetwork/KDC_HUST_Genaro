@@ -1,6 +1,6 @@
 // This Searchable Symmetric Encryption Scheme (SSE) is from a paper proposed by Song et al. in IEEE S&P 2000.
-// Citation: Song D X, Wagner D, Perrig A. Practical techniques for searches on encrypted data[C]//Security
-// and Privacy, 2000. S&P 2000. Proceedings. 2000 IEEE Symposium on. IEEE, 2000: 44-55.
+// Citation: Dawn Xiaoding Song, D. Wagner and A. Perrig, "Practical techniques for searches on encrypted data,"
+// Proceeding 2000 IEEE Symposium on Security and Privacy. S&P 2000, Berkeley, CA, 2000, pp. 44-55.
 
 package crypto
 
@@ -27,13 +27,12 @@ const (
 func sPadding(keyword []byte) []byte {
 	if len(keyword) == SSize {
 		return keyword
-	}
-	// if SSize != 64, the hash function need to be changed
-	if len(keyword) > SSize {
+	} else {
+		// if SSize != 64, the hash function needs to be changed
 		return SHA3_512(keyword)
 	}
-	paddingCount := SSize - len(keyword)
-	return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
+	//paddingCount := SSize - len(keyword)
+	//return append(keyword, bytes.Repeat([]byte{byte(0)}, paddingCount)...)
 }
 
 // xorBytes computes the XOR of two byte slices
