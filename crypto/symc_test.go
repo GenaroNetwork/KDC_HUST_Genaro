@@ -54,13 +54,13 @@ func TestEncryptDecrypt(t *testing.T) {
 	msg := []byte("Genaro Network")
 	fmt.Println(len(msg))
 
-	ciphertext, err := AESEncryptOFB(key, msg)
+	ciphertext, err := AESEncryptCBC(key, msg)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(len(ciphertext))
 
-	plaintext, err := AESDecryptOFB(key, ciphertext)
+	plaintext, err := AESDecryptCBC(key, ciphertext)
 	if err != nil {
 		panic(err)
 	}

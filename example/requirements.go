@@ -161,7 +161,7 @@ func DecEValues(keys []KeyWithPub, evs []EValues) (vs [][]byte, num int, err err
 		for _, ev := range evs {
 			if bytes.Equal(pub, ev.Pub) {
 				for _, ele := range ev.EVs {
-					v, err := crypto.AESDecryptOFB(k0, ele)
+					v, err := crypto.AESDecryptCBC(k0, ele)
 					if err != nil {
 						return vs, num, err
 					}

@@ -44,12 +44,12 @@ func (user *GenaroUser) LoadAsyKey(ecdsapath, eciespath string) (err error) {
 
 // EncryptKeyValue encrypts key-value pair by symmetrical keys from kdc
 func EncryptKeyValue(keys *kdc.SubKey, kv *KeyValue) (ekv *EnKeyValue, err error) {
-	ekey, err := crypto.AESEncryptOFB(keys.EKey, kv.Key)
+	ekey, err := crypto.AESEncryptCBC(keys.EKey, kv.Key)
 	if err != nil {
 		return nil, fmt.Errorf("EncryptKeyValue: failed to encrypt key with error: %s", err.Error())
 	}
 
-	evalue, err := crypto.AESEncryptOFB(keys.EKey, kv.Value)
+	evalue, err := crypto.AESEncryptCBC(keys.EKey, kv.Value)
 	if err != nil {
 		return nil, fmt.Errorf("EncryptKeyValue: failed to encrypt value with error: %s", err.Error())
 	}
@@ -69,12 +69,12 @@ func EncryptKeyValue(keys *kdc.SubKey, kv *KeyValue) (ekv *EnKeyValue, err error
 
 // DecryptKeyValue decrypts ciphertext of key-value pair, and ignores the searchable ciphertext
 func DecryptKeyValue(keys *kdc.SubKey, ekv *EnKeyValue) (kv *KeyValue, err error) {
-	key, err := crypto.AESDecryptOFB(keys.EKey, ekv.EKey)
+	key, err := crypto.AESDecryptCBC(keys.EKey, ekv.EKey)
 	if err != nil {
 		return nil, fmt.Errorf("DecryptKeyValue: failed to decrypt key with error: %s", err.Error())
 	}
 
-	value, err := crypto.AESDecryptOFB(keys.EKey, ekv.EValue)
+	value, err := crypto.AESDecryptCBC(keys.EKey, ekv.EValue)
 	if err != nil {
 		return nil, fmt.Errorf("DecryptKeyValue: failed to decrypt value with error: %s", err.Error())
 	}
