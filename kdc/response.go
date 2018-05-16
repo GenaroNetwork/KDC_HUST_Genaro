@@ -1,8 +1,8 @@
 // There are four kinds of responses
-// NegativeResponse: 0x00 kdc rejects the request of user
-// PositiveResponse: 0xcd kdc responds the executing state for RequestC
-// ExpectedResponse: 0xab kdc returns the the corresponding keys for RequestA or RequestB
-// AllKeysResponse:  0xef kdc returns all keys for RequestE
+// negativeResponse: 0x00 kdc rejects the request of user
+// positiveResponse: 0xcd kdc responds the executing state for RequestC
+// expectedResponse: 0xab kdc returns the the corresponding keys for RequestA or RequestB
+// allKeysResponse:  0xef kdc returns all keys for RequestE
 // Note that the RequestD has no need to respond
 
 package kdc
@@ -41,46 +41,46 @@ func ResopndToRequest(request []byte, pri *ecdsa.PrivateKey) (response []byte, e
 	copy(msg[1+len(req.Norf)+len(req.Snon):], req.Enpk)
 	copy(msg[1+len(req.Norf)+len(req.Snon)+len(req.Enpk):], list)
 	if !crypto.VerifySignNoPub(msg, req.Smsg) {
-		return NegativeResponse([]byte("Request has been tampered"), pri)
+		return negativeResponse([]byte("Request has been tampered"), pri)
 	}
 
 	// handle RequestA
 	if bytes.Equal(req.Type, []byte{0xa1}) {
 		pub := crypto.BytesToEciesPub(req.Enpk, crypto.DefaultCurve)
-		return HandleRequestA(msg, req, pub, pri)
+		return handleRequestA(msg, req, pub, pri)
 	}
 
 	// handle RequestB
 	if bytes.Equal(req.Type, []byte{0xb2}) {
 		spub, _ := crypto.PubFromSign(msg, req.Smsg)
 		epub := crypto.BytesToEciesPub(req.Enpk, crypto.DefaultCurve)
-		return HandleRequestB(req.Norf, spub, epub, pri)
+		return handleRequestB(req.Norf, spub, epub, pri)
 	}
 
 	// handle RequestC
 	if bytes.Equal(req.Type, []byte{0xc3}) {
 		spub, _ := crypto.PubFromSign(msg, req.Smsg)
-		return HandleRequestC(req.Norf, spub, req.List, pri)
+		return handleRequestC(req.Norf, spub, req.List, pri)
 	}
 
 	// handle RequestD
 	if bytes.Equal(req.Type, []byte{0xd4}) {
 		spub, _ := crypto.PubFromSign(msg, req.Smsg)
 		// no need to reply to request D
-		return nil, HandleRequestD(req.Norf, spub)
+		return nil, handleRequestD(req.Norf, spub)
 	}
 
 	// handle RequestE
 	if bytes.Equal(req.Type, []byte{0xe5}) {
 		spub, _ := crypto.PubFromSign(msg, req.Smsg)
 		epub := crypto.BytesToEciesPub(req.Enpk, crypto.DefaultCurve)
-		return HandleRequestE(req.Norf, spub, epub, pri)
+		return handleRequestE(req.Norf, spub, epub, pri)
 	}
 
 	return nil, nil
 }
 
-func HandleRequestA(msg []byte,
+func handleRequestA(msg []byte,
 	req *protobuf.Request,
 	pub *ecies.PublicKey,
 	pri *ecdsa.PrivateKey) ([]byte, error) {
@@ -88,17 +88,17 @@ func HandleRequestA(msg []byte,
 	//verify whether  the two public keys from Snon and Smsg are the same
 	pub1, err := crypto.PubFromSign(req.Norf, req.Snon)
 	if err != nil {
-		return NegativeResponse([]byte("Bad signature of nonce"), pri)
+		return negativeResponse([]byte("Bad signature of nonce"), pri)
 	}
 	pub2, _ := crypto.PubFromSign(msg, req.Smsg)
 	if !bytes.Equal(pub1, pub2) {
-		return NegativeResponse([]byte("Illegal request"), pri)
+		return negativeResponse([]byte("Illegal request"), pri)
 	}
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("HandleRequestA: failed to connect with local host")
+		return nil, errors.New("handleRequestA: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -114,44 +114,44 @@ func HandleRequestA(msg []byte,
 		// generate sub keys
 		subk, err := GenSubKey(sdb, msk, fileid[:], pub1)
 		if err != nil {
-			return nil, errors.New("HandleRequestA: something wrong with sub keys generation")
+			return nil, errors.New("handleRequestA: something wrong with sub keys generation")
 		}
 
 		// return an expected response
-		return ExpectedResponse(fileid[:], subk, pub, pri)
+		return expectedResponse(fileid[:], subk, pub, pri)
 	}
 
 	// It is a new request
 	msk, err = GenMasterKey(mdb, fileid[:], pub1)
 	if err != nil {
-		return nil, errors.New("HandleRequestA: something wrong with master key generation")
+		return nil, errors.New("handleRequestA: something wrong with master key generation")
 	}
 
 	//generate sub keys
 	subk, err := GenSubKey(sdb, msk, fileid[:], pub1)
 	if err != nil {
-		return nil, errors.New("HandleRequestA: something wrong with sub keys generation")
+		return nil, errors.New("handleRequestA: something wrong with sub keys generation")
 	}
 
 	// save whitelist
 	wdb := session.DB(WilDB)
 	err = SaveWhitelist(wdb, fileid[:], pub1, req.List)
 	if err != nil {
-		return nil, errors.New("HandleRequestA: something wrong with whitelist saving")
+		return nil, errors.New("handleRequestA: something wrong with whitelist saving")
 	}
 
 	// return an expected response
-	return ExpectedResponse(fileid[:], subk, pub, pri)
+	return expectedResponse(fileid[:], subk, pub, pri)
 }
 
-func HandleRequestB(fileid, spub []byte,
+func handleRequestB(fileid, spub []byte,
 	epub *ecies.PublicKey,
 	kpri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("HandleRequestB: failed to connect with local host")
+		return nil, errors.New("handleRequestB: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -159,35 +159,35 @@ func HandleRequestB(fileid, spub []byte,
 
 	// check for permissions
 	if !CheckWhitelist(wdb, fileid, spub) {
-		return NegativeResponse([]byte("Permission denied"), kpri)
+		return negativeResponse([]byte("Permission denied"), kpri)
 	}
 
 	//get master key
 	mdb := session.DB(MskDB)
 	msk, err := GetMasterKey(mdb, fileid)
 	if err != nil {
-		return NegativeResponse([]byte("No such fileid in kdc"), kpri)
+		return negativeResponse([]byte("No such fileid in kdc"), kpri)
 	}
 
 	//generate sub keys
 	sdb := session.DB(SaltDB)
 	subk, err := GenSubKey(sdb, msk, fileid[:], spub)
 	if err != nil {
-		return nil, errors.New("HandleRequestB: something wrong with sub keys generation")
+		return nil, errors.New("handleRequestB: something wrong with sub keys generation")
 	}
 
 	// return an expected response
-	return ExpectedResponse(fileid, subk, epub, kpri)
+	return expectedResponse(fileid, subk, epub, kpri)
 }
 
-func HandleRequestC(fileid, pub []byte,
+func handleRequestC(fileid, pub []byte,
 	list [][]byte,
 	kpri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("HandleRequestC: failed to connect with local host")
+		return nil, errors.New("handleRequestC: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -200,7 +200,7 @@ func HandleRequestC(fileid, pub []byte,
 	err = c.Find(bson.M{"file": id, "owner": spub}).One(&result)
 	if err != nil {
 		// only owner can update the whitelist
-		return NegativeResponse([]byte("Permission denied"), kpri)
+		return negativeResponse([]byte("Permission denied"), kpri)
 	}
 
 	counter := 0
@@ -220,15 +220,15 @@ func HandleRequestC(fileid, pub []byte,
 	statue := fmt.Sprintf("%d new pubs have been added successfully", counter)
 
 	// return an expected response
-	return PositiveResponse([]byte(statue), kpri)
+	return positiveResponse([]byte(statue), kpri)
 }
 
-func HandleRequestD(fileid, pub []byte) error {
+func handleRequestD(fileid, pub []byte) error {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return errors.New("HandleRequestD: failed to connect with local host")
+		return errors.New("handleRequestD: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -249,14 +249,14 @@ func HandleRequestD(fileid, pub []byte) error {
 	return AddOldList(d, fileid)
 }
 
-func HandleRequestE(fileid, spub []byte,
+func handleRequestE(fileid, spub []byte,
 	epub *ecies.PublicKey,
 	kpri *ecdsa.PrivateKey) ([]byte, error) {
 
 	// connect database host
 	session, err := mgo.Dial("localhost")
 	if err != nil {
-		return nil, errors.New("HandleRequestE: failed to connect with local host")
+		return nil, errors.New("handleRequestE: failed to connect with local host")
 	}
 	defer session.Close()
 
@@ -264,21 +264,21 @@ func HandleRequestE(fileid, spub []byte,
 	sud := session.DB(SupDB)
 	sad := session.DB(SaltDB)
 
-	kos, err := ReturnAllKeys(msd, sud, sad, fileid, spub)
+	kos, err := returnAllKeys(msd, sud, sad, fileid, spub)
 	if err == ErrNoAccess {
-		return NegativeResponse([]byte("Permission denied"), kpri)
+		return negativeResponse([]byte("Permission denied"), kpri)
 	}
 	if err == ErrNoFileid {
-		return NegativeResponse([]byte("No such fileid in kdc"), kpri)
+		return negativeResponse([]byte("No such fileid in kdc"), kpri)
 	}
 	if err == nil {
-		return AllKeysResponse(fileid, kos, epub, kpri)
+		return allKeysResponse(fileid, kos, epub, kpri)
 	}
 	return nil, err
 }
 
 // 0xab, respond keys which belong to the pub
-func ExpectedResponse(fileid []byte,
+func expectedResponse(fileid []byte,
 	keys *SubKey,
 	pub *ecies.PublicKey,
 	pri *ecdsa.PrivateKey) ([]byte, error) {
@@ -294,7 +294,7 @@ func ExpectedResponse(fileid []byte,
 	// encrypt keys and fileid by client's ecies public key
 	c, err := crypto.EciesEncrypt(rand.Reader, pub, m)
 	if err != nil {
-		return nil, errors.New("ExpectedResponse: failed to encrypt keys and fileid")
+		return nil, errors.New("expectedResponse: failed to encrypt keys and fileid")
 	}
 
 	// assemble message
@@ -305,7 +305,7 @@ func ExpectedResponse(fileid []byte,
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("ExpectedResponse: failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("expectedResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
@@ -318,7 +318,7 @@ func ExpectedResponse(fileid []byte,
 }
 
 // 0xcd respond the executing state
-func PositiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
+func positiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	ty := []byte{0xcd}
 
 	// assemble messages
@@ -329,7 +329,7 @@ func PositiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("PositiveResponse: failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("positiveResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
@@ -342,7 +342,7 @@ func PositiveResponse(state []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 }
 
 // 0x00 Reject the request with some reasons
-func NegativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
+func negativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	ty := []byte{0x00}
 
 	// assemble messages
@@ -353,7 +353,7 @@ func NegativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("NegativeResponse: failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("negativeResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
@@ -366,7 +366,7 @@ func NegativeResponse(reason []byte, pri *ecdsa.PrivateKey) ([]byte, error) {
 }
 
 // 0xef respond all the keys of fileid
-func AllKeysResponse(fileid []byte,
+func allKeysResponse(fileid []byte,
 	keys []*KeyOwner,
 	pub *ecies.PublicKey,
 	pri *ecdsa.PrivateKey) ([]byte, error) {
@@ -383,7 +383,7 @@ func AllKeysResponse(fileid []byte,
 		// encrypt key by ecies pub
 		ek, err := crypto.EciesEncrypt(rand.Reader, pub, k)
 		if err != nil {
-			return nil, errors.New("AllKeysResponse: failed to encrypt keys")
+			return nil, errors.New("allKeysResponse: failed to encrypt keys")
 		}
 
 		ele := &protobuf.ResponseAllkeys{
@@ -403,7 +403,7 @@ func AllKeysResponse(fileid []byte,
 	// sign message
 	sign, err := crypto.SignMessage(msg, pri)
 	if err != nil {
-		return nil, fmt.Errorf("AllKeysResponse: failed to sign message with error: %s", err.Error())
+		return nil, fmt.Errorf("allKeysResponse: failed to sign message with error: %s", err.Error())
 	}
 
 	// marshal as protocol buffer
